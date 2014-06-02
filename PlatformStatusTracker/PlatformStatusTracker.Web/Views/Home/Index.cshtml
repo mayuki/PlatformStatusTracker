@@ -11,7 +11,7 @@
 @foreach (var date in Model.Dates.OrderByDescending(x => x))
 {
     <article>
-        <h1>@date.ToString("D", DateTimeFormatInfo.InvariantInfo) (UTC)</h1>
+        <h1><a href="@Url.Action("Changes", "Home", new { Date = date.ToString("yyyy-MM-dd") })">@date.ToString("D", DateTimeFormatInfo.InvariantInfo) (UTC)</a></h1>
         @Html.Partial("Partial/ChangeSets", new ChangeSetsViewModel
                                             {
                                                 IeChangeSet = Model.IeChangeSetsByDate.ContainsKey(date) ? Model.IeChangeSetsByDate[date] : null,
