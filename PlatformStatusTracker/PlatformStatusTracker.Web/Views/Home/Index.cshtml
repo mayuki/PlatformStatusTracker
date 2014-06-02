@@ -1,0 +1,25 @@
+﻿@using System.Globalization
+@using System.Text
+@using PlatformStatusTracker.Core.Data
+@using PlatformStatusTracker.Core.Model
+@using PlatformStatusTracker.Web.ViewModels.Home
+@model PlatformStatusTracker.Web.ViewModels.Home.HomeIndexViewModel
+@{
+    ViewBag.Title = "";
+}
+
+@foreach (var date in Model.Dates.OrderByDescending(x => x))
+{
+    <article>
+        <h1>@date.ToString("D", DateTimeFormatInfo.InvariantInfo) (UTC)</h1>
+        @Html.Partial("Partial/ChangeSets", new ChangeSetsViewModel
+                                            {
+                                                IeChangeSet = Model.IeChangeSetsByDate.ContainsKey(date) ? Model.IeChangeSetsByDate[date] : null,
+                                                ChromeChangeSet = Model.ChromeChangeSetsByDate.ContainsKey(date) ? Model.ChromeChangeSetsByDate[date] : null,
+                                            })
+    </article>
+}
+
+@section Footer {
+    <p>Last Update: @Model.LastUpdatedAt.ToString("u")</p>
+}

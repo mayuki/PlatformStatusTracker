@@ -1,0 +1,135 @@
+﻿@using System.Globalization
+@using System.Text
+@using PlatformStatusTracker.Core.Data
+@using PlatformStatusTracker.Core.Model
+@model PlatformStatusTracker.Web.ViewModels.Home.ChangeSetsViewModel
+
+@if (Model.IeChangeSet != null && Model.IeChangeSet.Changes.Any())
+{
+    <section>
+        <h1><a href="http://status.modern.ie/">Internet Explorer</a></h1>
+        <ul>
+            @foreach (var change in Model.IeChangeSet.Changes.Cast<IeChangeInfo>())
+            {
+                if (change.IsAdded)
+                {
+                    <li class="changes_item changes_item-Added">
+                        <span class="changes_item-label">Added</span>: <a href="http://status.modern.ie/#@(change.NewStatus.Name.ToLowerInvariant().Replace(" ", ""))">@change.NewStatus.Name</a>
+                        <div>Status: @(change.NewStatus.IeStatus.Text)</div>
+                    </li>
+                }
+                if (change.IsRemoved)
+                {
+                    <li class="changes_item changes_item-Removed">
+                        <span class="changes_item-label">Removed</span>: @change.OldStatus.Name
+                    </li>
+                }
+                if (change.IsChanged)
+                {
+                    <li class="changes_item changes_item-Changed">
+                        <span class="changes_item-label">Changed</span>: <a href="http://status.modern.ie/#@(change.NewStatus.Name.ToLowerInvariant().Replace(" ", ""))">@change.NewStatus.Name</a> @ToIeStatusChangedInfo(change.OldStatus.IeStatus, change.NewStatus.IeStatus)
+                    </li>
+                }
+                @*
+                <li>
+                    NewStatus: @(change.NewStatus != null ? change.NewStatus.Id.ToString() : ""),
+                    OldStatus: @(change.OldStatus != null ? change.OldStatus.Id.ToString() : "")
+                </li>
+                *@
+            }
+        </ul>
+    </section>
+}
+@if (Model.ChromeChangeSet != null && Model.ChromeChangeSet.Changes.Any())
+{
+    <section>
+        <h1><a href="http://www.chromestatus.com/features">Chromium</a></h1>
+        <ul>
+            @foreach (var change in Model.ChromeChangeSet.Changes.Cast<ChromiumChangeInfo>())
+            {
+                if (change.IsAdded)
+                {
+                    <li class="changes_item changes_item-Added">
+                        <span class="changes_item-label">Added</span>: <a href="@change.NewStatus.BugUrl">@change.NewStatus.Name</a>
+                        <div>Status: @(change.NewStatus.ImplStatusChrome)</div>
+                    </li>
+                }
+                if (change.IsRemoved)
+                {
+                    <li class="changes_item changes_item-Removed">
+                        <span class="changes_item-label">Removed</span>: <a href="@change.NewStatus.BugUrl">@change.OldStatus.Name</a>
+                    </li>
+                }
+                if (change.IsChanged)
+                {
+                    <li class="changes_item changes_item-Changed">
+                        <span class="changes_item-label">Changed</span>: <a href="@change.NewStatus.BugUrl">@change.NewStatus.Name</a>
+                        @ToChromiumStatusChangedInfo(change.NewStatus, change.OldStatus)
+                    </li>
+                }
+                @*
+                    <li>
+                        NewStatus: @(change.NewStatus != null ? change.NewStatus.Id.ToString() : ""),
+                        OldStatus: @(change.OldStatus != null ? change.OldStatus.Id.ToString() : "")
+                    </li>
+                *@
+            }
+        </ul>
+    </section>
+}
+
+@* ===== Helper Methods =========================================================================== *@
+@helper ToIeStatusChangedInfo(IeStatus oldStatus, IeStatus newStatus)
+{
+    if (oldStatus.Text != newStatus.Text)
+    {
+        <div>Status: @oldStatus.Text -&gt; @newStatus.Text</div>
+    }
+    if (oldStatus.IePrefixed != newStatus.IePrefixed)
+    {
+        <div>Prefixed: @(String.IsNullOrWhiteSpace(oldStatus.IePrefixed) ? "[Not Implemented]" : oldStatus.IePrefixed) -&gt; @newStatus.IePrefixed</div>
+    }
+    if (oldStatus.IeUnprefixed != newStatus.IeUnprefixed)
+    {
+        <div>UnPrefixed: @(String.IsNullOrWhiteSpace(oldStatus.IeUnprefixed) ? "[Not Implemented]" : oldStatus.IeUnprefixed) -&gt; @newStatus.IeUnprefixed</div>
+    }
+}
+@helper ToChromiumStatusChangedInfo(ChromiumPlatformStatus oldStatus, ChromiumPlatformStatus newStatus)
+{
+    if (oldStatus.ImplStatusChrome != newStatus.ImplStatusChrome)
+    {
+        <div>Status: @oldStatus.ImplStatusChrome -&gt; @newStatus.ImplStatusChrome</div>
+    }
+    if (oldStatus.Prefixed != newStatus.Prefixed)
+    {
+        <div>Prefixed: @oldStatus.Prefixed -&gt; @newStatus.Prefixed</div>
+    }
+    if (oldStatus.ShippedAndroidMilestone != newStatus.ShippedAndroidMilestone)
+    {
+        <div>ShippedAndroidMilestone: @Value(oldStatus.ShippedAndroidMilestone) -&gt; @Value(newStatus.ShippedAndroidMilestone)</div>
+    }
+    if (oldStatus.ShippedIosMilestone != newStatus.ShippedIosMilestone)
+    {
+        <div>ShippedIosMilestone: @Value(oldStatus.ShippedIosMilestone) -&gt; @Value(newStatus.ShippedIosMilestone)</div>
+    }
+    if (oldStatus.ShippedMilestone != newStatus.ShippedMilestone)
+    {
+        <div>ShippedMilestone: @Value(oldStatus.ShippedMilestone) -&gt; @Value(newStatus.ShippedMilestone)</div>
+    }
+    if (oldStatus.ShippedOperaAndroidMilestone != newStatus.ShippedOperaAndroidMilestone)
+    {
+        <div>ShippedOperaAndroidMilestone: @Value(oldStatus.ShippedOperaAndroidMilestone) -&gt; @Value(newStatus.ShippedOperaAndroidMilestone)</div>
+    }
+    if (oldStatus.ShippedOperaMilestone != newStatus.ShippedOperaMilestone)
+    {
+        <div>ShippedOperaMilestone: @Value(oldStatus.ShippedOperaMilestone) -&gt; @Value(newStatus.ShippedOperaMilestone)</div>
+    }
+    if (oldStatus.ShippedWebViewMilestone != newStatus.ShippedWebViewMilestone)
+    {
+        <div>ShippedWebViewMilestone: @Value(oldStatus.ShippedWebViewMilestone) -&gt; @Value(newStatus.ShippedWebViewMilestone)</div>
+    }
+}
+@helper Value(Int32? value)
+{
+    @(value.HasValue ? value.ToString() : "-")
+}

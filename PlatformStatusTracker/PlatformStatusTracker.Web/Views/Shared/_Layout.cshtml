@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(String.IsNullOrWhiteSpace(ViewBag.Title) ? "" : ViewBag.Title + " - ")Browser Platform Status Tracker</title>
+    <link rel="alternate" type="application/atom+xml" title="Browser Platform Status Tracker" href="@Url.Action("Feed", "Home", new object(), "http")" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("LocalResources", required: false)
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-51517387-1', 'platformstatustracker.azurewebsites.net');
+      ga('send', 'pageview');
+    </script>
+    <script src="//use.typekit.net/emv6mtj.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
+</head>
+<body>
+    @*
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Browser Platform Status Tracker", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    *@
+    <div class="container body-content">
+        <header>
+            <h1><a href="/">Browser Platform Status Tracker</a></h1>
+            @RenderSection("Header", required: false)
+        </header>
+        <main>
+            @RenderBody()
+        </main>
+        <hr />
+        <footer>
+            @RenderSection("Footer", required: false)
+            <p>@Html.ActionLink("Feed", "Feed", "Home") | <a href="http://github.com/mayuki/PlatformStatusTracker">GitHub</a> | Source: <a href="http://www.chromestatus.com/features">Chromium Dashboard</a> and <a href="http://status.modern.ie/">Internet Explorer Web Platform Status and Roadmap</a> (Creative Commons Attribution 2.5 License)</p>
+            <p>Mayuki Sawatari &lt;mayuki@misuzilla.org&gt;</p>
+        </footer>
+    </div>
+</body>
+</html>

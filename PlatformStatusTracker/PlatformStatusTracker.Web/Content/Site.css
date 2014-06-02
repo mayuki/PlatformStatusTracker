@@ -1,0 +1,57 @@
+﻿/*
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+    */
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+h1 {
+    font-family: 'Segoe UI', 'myriad-pro',sans-serif;
+}
+    .container > header > h1 {
+        font-size: 2.5em;
+        font-family: 'Segoe UI Light', 'myriad-pro',sans-serif;
+        margin-bottom: 1em;
+    }
+    .container > header > h1 a {
+        color: black;
+        text-decoration: none;
+    }
+    main > article > h1 {
+        font-size: 1.75em;
+    }
+    article section h1 {
+        font-size: 1.25em;
+    }
+
+.changes_item {
+    margin: 1em 0;
+}
+
+.changes_item-Added .changes_item-label {
+    color: darkgreen;
+}
+.changes_item-Changed .changes_item-label {
+    color: darkorange;
+}
+.changes_item-Removed .changes_item-label {
+    color: darkred;
+}
+
+.container > footer {
+    text-align: right;
+    color: darkgray;
+}
