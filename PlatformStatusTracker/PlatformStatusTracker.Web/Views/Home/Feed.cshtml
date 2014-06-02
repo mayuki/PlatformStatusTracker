@@ -20,7 +20,7 @@
     @foreach (var date in Model.Dates.OrderByDescending(x => x))
     {
         <entry>
-            <title>@date.ToString("D", CultureInfo.GetCultureInfo("en-us"))</title>
+            <title>@date.ToString("yyyy-MM-dd", CultureInfo.GetCultureInfo("en-us"))</title>
             <link href="@Url.Action("Changes", "Home", new { Date = date.ToString("yyyy-MM-dd") }, "http")" />
             <id>@Url.Action("Changes", "Home", new { Date = date.ToString("yyyy-MM-dd") }, "http")</id>
             <updated>@date.ToString("yyyy-MM-dd'T'HH:mm:ss.fffK", DateTimeFormatInfo.InvariantInfo)</updated>

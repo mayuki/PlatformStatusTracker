@@ -4,10 +4,10 @@
 @using PlatformStatusTracker.Core.Model
 @model PlatformStatusTracker.Web.ViewModels.Home.ChangesViewModel
 @{
-    ViewBag.Title = Model.Date.ToString("D", DateTimeFormatInfo.InvariantInfo) + " - Changes";
+    ViewBag.Title = Model.Date.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo) + " - Changes";
 }
 
 <article>
-    <h1>@Model.Date.ToString("D", DateTimeFormatInfo.InvariantInfo) (UTC)</h1>
+    <h1>@Model.Date.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo) (UTC)</h1>
     @Html.Partial("Partial/ChangeSets", Model.ChangeSets)
 </article>
