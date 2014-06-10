@@ -58,14 +58,14 @@
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span>: <a href="@change.NewStatus.BugUrl">@change.OldStatus.Name</a>
+                        <span class="changes_item-label">Removed</span>: <a href="@change.OldStatus.BugUrl">@change.OldStatus.Name</a>
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
                         <span class="changes_item-label">Changed</span>: <a href="@change.NewStatus.BugUrl">@change.NewStatus.Name</a>
-                        @ToChromiumStatusChangedInfo(change.NewStatus, change.OldStatus)
+                        @ToChromiumStatusChangedInfo(change.OldStatus, change.NewStatus)
                     </li>
                 }
                 @*
@@ -95,11 +95,11 @@
     }
     if (oldStatus.IePrefixed != newStatus.IePrefixed)
     {
-        <div>Prefixed: @(String.IsNullOrWhiteSpace(oldStatus.IePrefixed) ? "[Not Implemented]" : oldStatus.IePrefixed) -&gt; @newStatus.IePrefixed</div>
+        <div>Prefixed: @Value(oldStatus.IePrefixed) -&gt; @Value(newStatus.IePrefixed)</div>
     }
     if (oldStatus.IeUnprefixed != newStatus.IeUnprefixed)
     {
-        <div>UnPrefixed: @(String.IsNullOrWhiteSpace(oldStatus.IeUnprefixed) ? "[Not Implemented]" : oldStatus.IeUnprefixed) -&gt; @newStatus.IeUnprefixed</div>
+        <div>UnPrefixed: @Value(oldStatus.IeUnprefixed) -&gt; @Value(newStatus.IeUnprefixed)</div>
     }
 }
 @helper ToChromiumStatusChangedInfo(ChromiumPlatformStatus oldStatus, ChromiumPlatformStatus newStatus)
@@ -139,5 +139,9 @@
 }
 @helper Value(Int32? value)
 {
-    @(value.HasValue ? value.ToString() : "-")
+    @(value.HasValue ? value.ToString() : "(n/a)")
+}
+@helper Value(String value)
+{
+    @(!String.IsNullOrWhiteSpace(value) ? value : "(n/a)")
 }
