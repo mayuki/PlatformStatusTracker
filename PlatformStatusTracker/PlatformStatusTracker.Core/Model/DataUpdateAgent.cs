@@ -33,7 +33,7 @@ namespace PlatformStatusTracker.Core.Model
         public async Task UpdateModernIeAsync()
         {
             var httpClient = new HttpClient();
-            var data = await httpClient.GetStringAsync("http://status.modern.ie/features");
+            var data = await httpClient.GetStringAsync("https://raw.githubusercontent.com/InternetExplorer/Status.IE/production/app/static/ie-status.json");
 
             await _statusDataRepository.InsertAsync(StatusDataType.InternetExplorer, DateTime.UtcNow.Date, data);
         }
