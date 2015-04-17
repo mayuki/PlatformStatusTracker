@@ -145,6 +145,8 @@ namespace PlatformStatusTracker.Core.Data
     {
         [JsonProperty("status")]
         public WebKitStatus Status { get; set; }
+        [JsonProperty("webkit-url")]
+        public string WebKitUrl { get; set; }
 
         public override bool CompareStatus(PlatformStatus status)
         {

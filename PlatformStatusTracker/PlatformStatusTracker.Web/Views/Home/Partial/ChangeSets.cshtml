@@ -88,7 +88,7 @@
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span>: <a href="#change.NewStatus.BugUrl">@change.NewStatus.Name</a>
+                        <span class="changes_item-label">Added</span>: @WebKitUrl(change.NewStatus)
                         <div>Status: @(change.NewStatus.Status.Status)</div>
                         <div>EnabledByDefault: @(change.NewStatus.Status.EnabledByDefault)</div>
                     </li>
@@ -96,13 +96,13 @@
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span>: <a href="#change.OldStatus.BugUrl">@change.OldStatus.Name</a>
+                        <span class="changes_item-label">Removed</span>: @WebKitUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span>: <a href="#change.NewStatus.BugUrl">@change.NewStatus.Name</a>
+                        <span class="changes_item-label">Changed</span>: @WebKitUrl(change.NewStatus)
                         @ToWebKitStatusChangedInfo(change.OldStatus, change.NewStatus)
                     </li>
                 }
@@ -126,7 +126,7 @@
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span>: <a href="#change.NewStatus.BugUrl">@change.NewStatus.Name</a>
+                        <span class="changes_item-label">Added</span>: @WebKitUrl(change.NewStatus)
                         <div>Status: @(change.NewStatus.Status.Status)</div>
                         <div>EnabledByDefault: @(change.NewStatus.Status.EnabledByDefault)</div>
                     </li>
@@ -134,13 +134,13 @@
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span>: <a href="#change.OldStatus.BugUrl">@change.OldStatus.Name</a>
+                        <span class="changes_item-label">Removed</span>: @WebKitUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span>: <a href="#change.NewStatus.BugUrl">@change.NewStatus.Name</a>
+                        <span class="changes_item-label">Changed</span>: @WebKitUrl(change.NewStatus)
                         @ToWebKitStatusChangedInfo(change.OldStatus, change.NewStatus)
                     </li>
                 }
@@ -160,6 +160,18 @@
     public static String ToModernIePageFragment(String name)
     {
         return Regex.Replace(name.ToLowerInvariant(), @"\W", "");
+    }
+
+}
+@helper WebKitUrl(WebKitPlatformStatus status)
+{
+    if (String.IsNullOrWhiteSpace(status.WebKitUrl))
+    {
+        <span>@status.Name</span>
+    }
+    else
+    {
+        <a href="@status.WebKitUrl">@status.Name</a>
     }
 }
 @helper ToIeStatusChangedInfo(IeStatus oldStatus, IeStatus newStatus)
