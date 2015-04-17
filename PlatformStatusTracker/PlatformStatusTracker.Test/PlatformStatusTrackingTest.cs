@@ -29,6 +29,15 @@ namespace PlatformStatusTracker.Test
 
         }
         [TestMethod]
+        public void GetChangeSetFromStatuses_TestData_3()
+        {
+            var changeInfoSet = PlatformStatusTracking.GetChangeInfoSetFromStatuses(
+                PlatformStatuses.DeserializeForWebKitStatus(File.ReadAllText("TestData\\webkitwebcore-features_182134.json")),
+                PlatformStatuses.DeserializeForWebKitStatus(File.ReadAllText("TestData\\webkitwebcore-features_182928.json"))
+            );
+
+        }
+        [TestMethod]
         public void GetChangeSetFromStatuses_Empty()
         {
             var changeInfoSet = PlatformStatusTracking.GetChangeInfoSetFromStatuses(

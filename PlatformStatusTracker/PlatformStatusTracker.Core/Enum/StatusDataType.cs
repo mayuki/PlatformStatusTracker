@@ -10,5 +10,7 @@ namespace PlatformStatusTracker.Core.Enum
     {
         InternetExplorer = 1,
         Chromium = 2,
+        WebKitWebCore = 3,
+        WebKitJavaScriptCore = 4,
     }
 }

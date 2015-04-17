@@ -18,11 +18,15 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
         {
             var ieChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.InternetExplorer, date);
             var chromeChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Chromium, date);
+            var webkitWebCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitWebCore, date);
+            var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitJavaScriptCore, date);
 
-            await Task.WhenAll(ieChangeSetsTask, chromeChangeSetsTask);
+            await Task.WhenAll(ieChangeSetsTask, chromeChangeSetsTask, webkitWebCoreChangeSetsTask, webkitJavaScriptCoreChangeSetsTask);
 
             var ieChangeSets = ieChangeSetsTask.Result;
             var chromeChangeSets = chromeChangeSetsTask.Result;
+            var webkitWebCoreChangeSets = webkitWebCoreChangeSetsTask.Result;
+            var webkitJavaScriptCoreChangeSets = webkitJavaScriptCoreChangeSetsTask.Result;
 
             return new ChangesViewModel()
             {
@@ -30,6 +34,8 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
                              {
                                  IeChangeSet = ieChangeSets.Any() ? ieChangeSets[0] : null,
                                  ChromeChangeSet = chromeChangeSets.Any() ? chromeChangeSets[0] : null,
+                                 WebKitWebCoreChangeSet = webkitWebCoreChangeSets.Any() ? webkitWebCoreChangeSets[0] : null,
+                                 WebKitJavaScriptCoreChangeSet = webkitJavaScriptCoreChangeSets.Any() ? webkitJavaScriptCoreChangeSets[0] : null,
                              },
                 Date = date,
             };

@@ -13,6 +13,8 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
     {
         public Dictionary<DateTime, ChangeSet> IeChangeSetsByDate { get; private set; }
         public Dictionary<DateTime, ChangeSet> ChromeChangeSetsByDate { get; private set; }
+        public Dictionary<DateTime, ChangeSet> WebKitWebCoreChangeSetsByDate { get; private set; }
+        public Dictionary<DateTime, ChangeSet> WebKitJavaScriptCoreChangeSetsByDate { get; private set; }
         public DateTime[] Dates { get; private set; }
         public DateTime LastUpdatedAt { get; private set; }
 
@@ -20,17 +22,24 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
         {
             var ieChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.InternetExplorer);
             var chromeChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Chromium);
+            var webkitWebCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitWebCore);
+            var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitJavaScriptCore);
             var lastUpdatedTask = statusDataRepository.GetLastUpdated();
-            await Task.WhenAll(ieChangeSetsTask, chromeChangeSetsTask, lastUpdatedTask);
+
+            await Task.WhenAll(ieChangeSetsTask, chromeChangeSetsTask, webkitWebCoreChangeSetsTask, webkitJavaScriptCoreChangeSetsTask, lastUpdatedTask);
 
             var ieChangeSets = ieChangeSetsTask.Result;
             var chromeChangeSets = chromeChangeSetsTask.Result;
+            var webkitWebCoreChangeSets = webkitWebCoreChangeSetsTask.Result;
+            var webkitJavaScriptCoreChangeSets = webkitJavaScriptCoreChangeSetsTask.Result;
             var lastUpdated = lastUpdatedTask.Result;
 
             return new HomeIndexViewModel()
                    {
                        IeChangeSetsByDate = ieChangeSets.ToDictionary(k => k.Date, v => v),
                        ChromeChangeSetsByDate = chromeChangeSets.ToDictionary(k => k.Date, v => v),
+                       WebKitWebCoreChangeSetsByDate = webkitWebCoreChangeSets.ToDictionary(k => k.Date, v => v),
+                       WebKitJavaScriptCoreChangeSetsByDate = webkitJavaScriptCoreChangeSets.ToDictionary(k => k.Date, v => v),
                        Dates = Enumerable.Concat(ieChangeSets, chromeChangeSets).Where(x => x.Changes.Any()).Select(x => x.Date).Distinct().ToArray(),
                        LastUpdatedAt = lastUpdated,
                    };

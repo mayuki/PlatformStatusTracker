@@ -109,9 +109,12 @@ namespace PlatformStatusTracker.Core.Repository
         private PlatformStatuses CreatePlatformStatusesFromEntity(StatusDataEntity entity)
         {
             return new PlatformStatuses(entity.Date,
-                                        ((entity.DataType == (Int32)StatusDataType.InternetExplorer)
+                                        (entity.DataType == (Int32)StatusDataType.InternetExplorer)
                                             ? (PlatformStatus[])PlatformStatuses.DeserializeForIeStatus(entity.GetContent())
-                                            : (PlatformStatus[])PlatformStatuses.DeserializeForChromiumStatus(entity.GetContent())));
+                                        : (entity.DataType == (Int32)StatusDataType.WebKitWebCore || entity.DataType == (Int32)StatusDataType.WebKitJavaScriptCore)
+                                            ? (PlatformStatus[])PlatformStatuses.DeserializeForWebKitStatus(entity.GetContent())
+                                            : (PlatformStatus[])PlatformStatuses.DeserializeForChromiumStatus(entity.GetContent())
+                                        );
         }
 
         private class StatusDataEntity : TableEntity

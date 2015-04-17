@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,12 @@ namespace PlatformStatusTracker.Core.Data
         public static ChromiumPlatformStatus[] DeserializeForChromiumStatus(string jsonValue)
         {
             return JsonConvert.DeserializeObject<ChromiumPlatformStatus[]>(jsonValue);
+        }
+        public static WebKitPlatformStatus[] DeserializeForWebKitStatus(string jsonValue)
+        {
+            var statuses = JsonConvert.DeserializeObject<WebKitPlatformStatuses>(jsonValue);
+
+            return statuses.Features.Concat(statuses.Specification).Where(x => x.Status != null).ToArray();
         }
 
         public DateTime Date { get; private set; }
@@ -51,6 +58,7 @@ namespace PlatformStatusTracker.Core.Data
         }
     }
 
+    [DebuggerDisplay("IePlatformStatus: {Name}")]
     public class IePlatformStatus : PlatformStatus
     {
         [JsonProperty("link")]
@@ -77,6 +85,7 @@ namespace PlatformStatusTracker.Core.Data
         }
     }
 
+    [DebuggerDisplay("ChromiumPlatformStatus: {Name}")]
     public class ChromiumPlatformStatus : PlatformStatus
     {
         [JsonProperty("bug_url")]
@@ -123,6 +132,32 @@ namespace PlatformStatusTracker.Core.Data
         }
     }
 
+    public class WebKitPlatformStatuses
+    {
+        [JsonProperty("specification")]
+        public WebKitPlatformStatus[] Specification { get; set; }
+        [JsonProperty("features")]
+        public WebKitPlatformStatus[] Features { get; set; }
+    }
+
+    [DebuggerDisplay("WebKitPlatformStatus: {Name}")]
+    public class WebKitPlatformStatus : PlatformStatus
+    {
+        [JsonProperty("status")]
+        public WebKitStatus Status { get; set; }
+
+        public override bool CompareStatus(PlatformStatus status)
+        {
+            var webkitStatus = status as WebKitPlatformStatus;
+            if (webkitStatus == null)
+                return false;
+
+            return this.Status.Status == webkitStatus.Status.Status &&
+                    this.Status.EnabledByDefault == webkitStatus.Status.EnabledByDefault
+                ;
+        }
+    }
+
     public class IeStatus
     {
         [JsonProperty("text")]
@@ -139,5 +174,13 @@ namespace PlatformStatusTracker.Core.Data
         public string Text { get; set; }
         [JsonProperty("value")]
         public int Value { get; set; }
+    }
+
+    public class WebKitStatus
+    {
+        [JsonProperty("status")]
+        public string Status { get; set; }
+        [JsonProperty("enabled-by-default")]
+        public string EnabledByDefault { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace PlatformStatusTracker.Core.Model
 
         public async Task UpdateAllAsync()
         {
-            await Task.WhenAll(UpdateChromiumAsync(), UpdateModernIeAsync());
+            await Task.WhenAll(UpdateChromiumAsync(), UpdateModernIeAsync(), UpdateWebKitJavaScriptCoreAsync(), UpdateWebKitWebCoreAsync());
         }
 
         public async Task UpdateChromiumAsync()
@@ -36,6 +36,22 @@ namespace PlatformStatusTracker.Core.Model
             var data = await httpClient.GetStringAsync("https://raw.githubusercontent.com/InternetExplorer/Status.IE/production/app/static/ie-status.json");
 
             await _statusDataRepository.InsertAsync(StatusDataType.InternetExplorer, DateTime.UtcNow.Date, data);
+        }
+
+        public async Task UpdateWebKitWebCoreAsync()
+        {
+            var httpClient = new HttpClient();
+            var data = await httpClient.GetStringAsync("http://svn.webkit.org/repository/webkit/trunk/Source/WebCore/features.json");
+
+            await _statusDataRepository.InsertAsync(StatusDataType.WebKitWebCore, DateTime.UtcNow.Date, data);
+        }
+
+        public async Task UpdateWebKitJavaScriptCoreAsync()
+        {
+            var httpClient = new HttpClient();
+            var data = await httpClient.GetStringAsync("http://svn.webkit.org/repository/webkit/trunk/Source/JavaScriptCore/features.json");
+
+            await _statusDataRepository.InsertAsync(StatusDataType.WebKitJavaScriptCore, DateTime.UtcNow.Date, data);
         }
     }
 }

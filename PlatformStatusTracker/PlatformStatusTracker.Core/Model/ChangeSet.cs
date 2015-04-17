@@ -50,6 +50,10 @@ namespace PlatformStatusTracker.Core.Model
             {
                 return new ChromiumChangeInfo(oldStatus, newStatus);
             }
+            if (oldStatus is WebKitPlatformStatus || newStatus is WebKitPlatformStatus)
+            {
+                return new WebKitChangeInfo(oldStatus, newStatus);
+            }
             else
             {
                 return new IeChangeInfo(oldStatus, newStatus);
@@ -73,5 +77,14 @@ namespace PlatformStatusTracker.Core.Model
 
         public ChromiumPlatformStatus OldStatus { get { return base.OldStatus as ChromiumPlatformStatus; } }
         public ChromiumPlatformStatus NewStatus { get { return base.NewStatus as ChromiumPlatformStatus; } }
+    }
+    public class WebKitChangeInfo : ChangeInfo
+    {
+        public WebKitChangeInfo(PlatformStatus oldStatus, PlatformStatus newStatus)
+            : base(oldStatus, newStatus)
+        { }
+
+        public WebKitPlatformStatus OldStatus { get { return base.OldStatus as WebKitPlatformStatus; } }
+        public WebKitPlatformStatus NewStatus { get { return base.NewStatus as WebKitPlatformStatus; } }
     }
 }

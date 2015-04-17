@@ -78,7 +78,82 @@
         </ul>
     </section>
 }
-
+@if (Model.WebKitWebCoreChangeSet != null && Model.WebKitWebCoreChangeSet.Changes.Any())
+{
+    <section>
+        <h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/features.json">WebKit (WebCore)</a></h1>
+        <ul>
+            @foreach (var change in Model.WebKitWebCoreChangeSet.Changes.Cast<WebKitChangeInfo>())
+            {
+                if (change.IsAdded)
+                {
+                    <li class="changes_item changes_item-Added">
+                        <span class="changes_item-label">Added</span>: <a href="#change.NewStatus.BugUrl">@change.NewStatus.Name</a>
+                        <div>Status: @(change.NewStatus.Status.Status)</div>
+                        <div>EnabledByDefault: @(change.NewStatus.Status.EnabledByDefault)</div>
+                    </li>
+                }
+                if (change.IsRemoved)
+                {
+                    <li class="changes_item changes_item-Removed">
+                        <span class="changes_item-label">Removed</span>: <a href="#change.OldStatus.BugUrl">@change.OldStatus.Name</a>
+                    </li>
+                }
+                if (change.IsChanged)
+                {
+                    <li class="changes_item changes_item-Changed">
+                        <span class="changes_item-label">Changed</span>: <a href="#change.NewStatus.BugUrl">@change.NewStatus.Name</a>
+                        @ToWebKitStatusChangedInfo(change.OldStatus, change.NewStatus)
+                    </li>
+                }
+                @*
+                    <li>
+                        NewStatus: @(change.NewStatus != null ? change.NewStatus.Id.ToString() : ""),
+                        OldStatus: @(change.OldStatus != null ? change.OldStatus.Id.ToString() : "")
+                    </li>
+                *@
+            }
+        </ul>
+    </section>
+}
+@if (Model.WebKitJavaScriptCoreChangeSet != null && Model.WebKitJavaScriptCoreChangeSet.Changes.Any())
+{
+    <section>
+        <h1><a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/features.json">WebKit (JavaScriptCore)</a></h1>
+        <ul>
+            @foreach (var change in Model.WebKitJavaScriptCoreChangeSet.Changes.Cast<WebKitChangeInfo>())
+            {
+                if (change.IsAdded)
+                {
+                    <li class="changes_item changes_item-Added">
+                        <span class="changes_item-label">Added</span>: <a href="#change.NewStatus.BugUrl">@change.NewStatus.Name</a>
+                        <div>Status: @(change.NewStatus.Status.Status)</div>
+                        <div>EnabledByDefault: @(change.NewStatus.Status.EnabledByDefault)</div>
+                    </li>
+                }
+                if (change.IsRemoved)
+                {
+                    <li class="changes_item changes_item-Removed">
+                        <span class="changes_item-label">Removed</span>: <a href="#change.OldStatus.BugUrl">@change.OldStatus.Name</a>
+                    </li>
+                }
+                if (change.IsChanged)
+                {
+                    <li class="changes_item changes_item-Changed">
+                        <span class="changes_item-label">Changed</span>: <a href="#change.NewStatus.BugUrl">@change.NewStatus.Name</a>
+                        @ToWebKitStatusChangedInfo(change.OldStatus, change.NewStatus)
+                    </li>
+                }
+                @*
+                    <li>
+                        NewStatus: @(change.NewStatus != null ? change.NewStatus.Id.ToString() : ""),
+                        OldStatus: @(change.OldStatus != null ? change.OldStatus.Id.ToString() : "")
+                    </li>
+                *@
+            }
+        </ul>
+    </section>
+}
 @* ===== Helper Methods =========================================================================== *@
 @functions
 {
@@ -135,6 +210,17 @@
     if (oldStatus.ShippedWebViewMilestone != newStatus.ShippedWebViewMilestone)
     {
         <div>ShippedWebViewMilestone: @Value(oldStatus.ShippedWebViewMilestone) -&gt; @Value(newStatus.ShippedWebViewMilestone)</div>
+    }
+}
+@helper ToWebKitStatusChangedInfo(WebKitPlatformStatus oldStatus, WebKitPlatformStatus newStatus)
+{
+    if (oldStatus.Status.EnabledByDefault != newStatus.Status.EnabledByDefault)
+    {
+        <div>EnabledByDefault: @oldStatus.Status.EnabledByDefault -&gt; @newStatus.Status.EnabledByDefault</div>
+    }
+    if (oldStatus.Status.Status != newStatus.Status.Status)
+    {
+        <div>Status: @Value(oldStatus.Status.Status) -&gt; @Value(newStatus.Status.Status)</div>
     }
 }
 @helper Value(Int32? value)

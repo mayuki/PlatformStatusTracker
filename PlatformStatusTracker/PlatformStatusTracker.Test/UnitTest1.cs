@@ -39,7 +39,18 @@ namespace PlatformStatusTracker.Test
         //        new StatusDataAzureStorageRepository("").InsertAsync(StatusDataType.Chromium, DateTime.Parse("2014/05/31"), File.ReadAllText("TestData\\chromestatus-com_20140531.json"))
         //    ).Wait();
         //}
-
+        [TestMethod]
+        public void BulkInsert_1()
+        {
+            Task.WhenAll(
+                new StatusDataAzureStorageRepository("").InsertAsync(StatusDataType.WebKitWebCore, DateTime.Parse("2015/03/30"), File.ReadAllText("TestData\\webkitwebcore-features_182134.json")),
+                new StatusDataAzureStorageRepository("").InsertAsync(StatusDataType.WebKitWebCore, DateTime.Parse("2015/04/07"), File.ReadAllText("TestData\\webkitwebcore-features_182134.json")),
+                new StatusDataAzureStorageRepository("").InsertAsync(StatusDataType.WebKitWebCore, DateTime.Parse("2015/04/09"), File.ReadAllText("TestData\\webkitwebcore-features_182593.json")),
+                new StatusDataAzureStorageRepository("").InsertAsync(StatusDataType.WebKitWebCore, DateTime.Parse("2015/04/10"), File.ReadAllText("TestData\\webkitwebcore-features_182949.json")),
+                new StatusDataAzureStorageRepository("").InsertAsync(StatusDataType.WebKitJavaScriptCore, DateTime.Parse("2015/03/30"), File.ReadAllText("TestData\\webkitjavascriptcore-features_182134.json")),
+                new StatusDataAzureStorageRepository("").InsertAsync(StatusDataType.WebKitJavaScriptCore, DateTime.Parse("2015/04/07"), File.ReadAllText("TestData\\webkitjavascriptcore-features_182949.json"))
+            ).Wait();
+        }
         //[TestMethod]
         //public void BulkInsert_2()
         //{

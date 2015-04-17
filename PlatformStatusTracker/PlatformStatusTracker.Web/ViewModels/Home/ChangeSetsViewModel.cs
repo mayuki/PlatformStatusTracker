@@ -10,5 +10,7 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
     {
         public ChangeSet IeChangeSet { get; set; }
         public ChangeSet ChromeChangeSet { get; set; }
+        public ChangeSet WebKitWebCoreChangeSet { get; set; }
+        public ChangeSet WebKitJavaScriptCoreChangeSet { get; set; }
     }
 }
