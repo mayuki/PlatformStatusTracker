@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ICSharpCode.SharpZipLib.BZip2;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
@@ -129,12 +130,14 @@ namespace PlatformStatusTracker.Core.Repository
 
                 DataType = (Int32)dataType;
                 Date = date;
+                DataCompression = (Int32)DataCompressionType.Bzip2;
                 Content = Compress(Encoding.UTF8.GetBytes(content));
             }
 
             public Byte[] Content { get; set; }
             public DateTime Date { get; set; }
             public Int32 DataType { get; set; }
+            public Int32 DataCompression { get; set; }
 
             public String GetContent()
             {
@@ -144,21 +147,29 @@ namespace PlatformStatusTracker.Core.Repository
             private Byte[] Compress(Byte[] bytes)
             {
                 var stream = new MemoryStream();
-                var gzipStream = new GZipStream(stream, CompressionLevel.Optimal);
-                gzipStream.Write(bytes, 0, bytes.Length);
-                gzipStream.Close();
+                var compressStream = (DataCompression == (Int32) DataCompressionType.Gzip)
+                    ? (Stream)new GZipStream(stream, CompressionLevel.Optimal)
+                    : (Stream)new BZip2OutputStream(stream, 900*1024);
+
+                compressStream.Write(bytes, 0, bytes.Length);
+                compressStream.Close();
 
                 return stream.ToArray();
             }
 
             private Byte[] Decompress(Byte[] bytes)
             {
-                var gzipStream = new GZipStream(new MemoryStream(bytes), CompressionMode.Decompress);
                 var memStream = new MemoryStream();
+
+                var compressedStream = new MemoryStream(bytes);
+                var uncompressStream = (DataCompression == (Int32)DataCompressionType.Gzip)
+                    ? (Stream)new GZipStream(compressedStream, CompressionMode.Decompress)
+                    : (Stream)new BZip2InputStream(compressedStream);
+
                 while (true)
                 {
                     var buffer = new byte[1024];
-                    var readLen = gzipStream.Read(buffer, 0, buffer.Length);
+                    var readLen = uncompressStream.Read(buffer, 0, buffer.Length);
                     if (readLen == 0)
                         break;
 
@@ -167,6 +178,12 @@ namespace PlatformStatusTracker.Core.Repository
 
                 return memStream.ToArray();
             }
+        }
+
+        private enum DataCompressionType
+        {
+            Gzip = 0,
+            Bzip2 = 1,
         }
     }
 
