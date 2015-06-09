@@ -40,7 +40,7 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
                        ChromeChangeSetsByDate = chromeChangeSets.ToDictionary(k => k.Date, v => v),
                        WebKitWebCoreChangeSetsByDate = webkitWebCoreChangeSets.ToDictionary(k => k.Date, v => v),
                        WebKitJavaScriptCoreChangeSetsByDate = webkitJavaScriptCoreChangeSets.ToDictionary(k => k.Date, v => v),
-                       Dates = Enumerable.Concat(ieChangeSets, chromeChangeSets).Where(x => x.Changes.Any()).Select(x => x.Date).Distinct().ToArray(),
+                       Dates = new [] { ieChangeSets, chromeChangeSets, webkitWebCoreChangeSets, webkitJavaScriptCoreChangeSets }.SelectMany(x => x).Where(x => x.Changes.Any()).Select(x => x.Date).Distinct().ToArray(),
                        LastUpdatedAt = lastUpdated,
                    };
         }
