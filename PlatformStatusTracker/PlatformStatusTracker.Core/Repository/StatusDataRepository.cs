@@ -9,6 +9,7 @@ using ICSharpCode.SharpZipLib.BZip2;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
 using PlatformStatusTracker.Core.Data;
 using PlatformStatusTracker.Core.Enum;
 
@@ -57,7 +58,19 @@ namespace PlatformStatusTracker.Core.Repository
 
             return
                 (await table.ExecuteQuerySegmentedAsync(new TableQuery<StatusDataEntity>().Where(queryFilter).Take(take), null))
-                    .Select(CreatePlatformStatusesFromEntity)
+                    .Select(x =>
+                    {
+                        // return null if JSON data was broken.
+                        try
+                        {
+                            return CreatePlatformStatusesFromEntity(x);
+                        }
+                        catch (JsonReaderException)
+                        {
+                            return null;
+                        }
+                    })
+                    .Where(x => x != null)
                     .ToArray();
         }
 
