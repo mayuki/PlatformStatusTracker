@@ -8,15 +8,19 @@
 @if (Model.IeChangeSet != null && Model.IeChangeSet.Changes.Any())
 {
     <section>
-        <h1><a href="http://status.modern.ie/">Internet Explorer</a></h1>
+        <h1><a href="https://dev.modern.ie/platform/status/">Edge</a></h1>
         <ul>
             @foreach (var change in Model.IeChangeSet.Changes.Cast<IeChangeInfo>())
             {
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span>: <a href="http://status.modern.ie/#@ToModernIePageFragment(change.NewStatus.Name)">@change.NewStatus.Name</a>
+                        <span class="changes_item-label">Added</span>: <a href="https://dev.modern.ie/platform/status/@ToModernIePageFragment(change.NewStatus.Name)/">@change.NewStatus.Name</a>
                         <div>Status: @(change.NewStatus.IeStatus.Text)</div>
+                        @if (change.NewStatus.IeStatus.Flag.HasValue)
+                        {
+                            <div>Enabling in about:flags: @(change.NewStatus.IeStatus.Flag)</div>
+                        }
                     </li>
                 }
                 if (change.IsRemoved)
@@ -28,7 +32,7 @@
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span>: <a href="http://status.modern.ie/#@ToModernIePageFragment(change.NewStatus.Name)">@change.NewStatus.Name</a> @ToIeStatusChangedInfo(change.OldStatus.IeStatus, change.NewStatus.IeStatus)
+                        <span class="changes_item-label">Changed</span>: <a href="https://dev.modern.ie/platform/status/@ToModernIePageFragment(change.NewStatus.Name)/">@change.NewStatus.Name</a> @ToIeStatusChangedInfo(change.OldStatus.IeStatus, change.NewStatus.IeStatus)
                     </li>
                 }
                 @*
@@ -188,6 +192,10 @@
     {
         <div>UnPrefixed: @Value(oldStatus.IeUnprefixed) -&gt; @Value(newStatus.IeUnprefixed)</div>
     }
+    if (oldStatus.Flag != newStatus.Flag)
+    {
+        <div>Enabling in about:flags: @Value(oldStatus.Flag) -&gt; @Value(newStatus.Flag)</div>
+    }
 }
 @helper ToChromiumStatusChangedInfo(ChromiumPlatformStatus oldStatus, ChromiumPlatformStatus newStatus)
 {
@@ -242,4 +250,8 @@
 @helper Value(String value)
 {
     @(!String.IsNullOrWhiteSpace(value) ? value : "(n/a)")
+}
+@helper Value(bool? value)
+{
+    @(value.HasValue ? value.ToString() : "(n/a)")
 }

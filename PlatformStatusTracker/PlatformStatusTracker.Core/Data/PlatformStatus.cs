@@ -81,7 +81,8 @@ namespace PlatformStatusTracker.Core.Data
             var ieStatus = status as IePlatformStatus;
             return this.IeStatus.IePrefixed == ieStatus.IeStatus.IePrefixed &&
                    this.IeStatus.IeUnprefixed == ieStatus.IeStatus.IeUnprefixed &&
-                   this.IeStatus.Text == ieStatus.IeStatus.Text;
+                   this.IeStatus.Text == ieStatus.IeStatus.Text &&
+                   this.IeStatus.Flag == ieStatus.IeStatus.Flag;
         }
     }
 
@@ -168,6 +169,8 @@ namespace PlatformStatusTracker.Core.Data
         public string IePrefixed { get; set; }
         [JsonProperty("ieUnprefixed")]
         public string IeUnprefixed { get; set; }
+        [JsonProperty("flag")]
+        public bool? Flag { get; set; }
     }
 
     public class ViewsStatus
