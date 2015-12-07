@@ -19,7 +19,13 @@ namespace PlatformStatusTracker.Core.Model
 
         public async Task UpdateAllAsync()
         {
-            await Task.WhenAll(UpdateChromiumAsync(), UpdateModernIeAsync(), UpdateWebKitJavaScriptCoreAsync(), UpdateWebKitWebCoreAsync());
+            //await UpdateChromiumAsync();
+            //await UpdateModernIeAsync();
+            //await UpdateWebKitJavaScriptCoreAsync();
+            //await UpdateWebKitWebCoreAsync();
+            //await UpdateMozillaAsync();
+
+            await Task.WhenAll(UpdateChromiumAsync(), UpdateModernIeAsync(), UpdateWebKitJavaScriptCoreAsync(), UpdateWebKitWebCoreAsync(), UpdateMozillaAsync());
         }
 
         public async Task UpdateChromiumAsync()
@@ -52,6 +58,14 @@ namespace PlatformStatusTracker.Core.Model
             var data = await httpClient.GetStringAsync("http://svn.webkit.org/repository/webkit/trunk/Source/JavaScriptCore/features.json");
 
             await _statusDataRepository.InsertAsync(StatusDataType.WebKitJavaScriptCore, DateTime.UtcNow.Date, data);
+        }
+
+        public async Task UpdateMozillaAsync()
+        {
+            var httpClient = new HttpClient();
+            var data = await httpClient.GetStringAsync("https://platform-status.mozilla.org/status.json");
+
+            await _statusDataRepository.InsertAsync(StatusDataType.Mozilla, DateTime.UtcNow.Date, data);
         }
     }
 }

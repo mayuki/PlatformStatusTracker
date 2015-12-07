@@ -12,5 +12,6 @@ namespace PlatformStatusTracker.Core.Enum
         Chromium = 2,
         WebKitWebCore = 3,
         WebKitJavaScriptCore = 4,
+        Mozilla = 5,
     }
 }

@@ -38,6 +38,15 @@ namespace PlatformStatusTracker.Test
 
         }
         [TestMethod]
+        public void GetChangeSetFromStatuses_TestData_4()
+        {
+            var changeInfoSet = PlatformStatusTracking.GetChangeInfoSetFromStatuses(
+                PlatformStatuses.DeserializeForMozillaStatus(File.ReadAllText("TestData\\mozilla-platatus_20151029_2f324f9.json")),
+                PlatformStatuses.DeserializeForMozillaStatus(File.ReadAllText("TestData\\mozilla-platatus_20151125_888cfed.json"))
+            );
+
+        }
+        [TestMethod]
         public void GetChangeSetFromStatuses_Empty()
         {
             var changeInfoSet = PlatformStatusTracking.GetChangeInfoSetFromStatuses(

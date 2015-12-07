@@ -25,17 +25,30 @@ namespace PlatformStatusTracker.Core.Data
             return statuses.Features.Concat(statuses.Specification).Where(x => x.Status != null).ToArray();
         }
 
-        public DateTime Date { get; private set; }
-        public PlatformStatus[] Statuses { get; private set; }
+        public static MozillaPlatformStatus[] DeserializeForMozillaStatus(string jsonValue)
+        {
+            var statuses = JsonConvert.DeserializeObject<MozillaPlatformStatuses>(jsonValue);
+            return statuses.Features;
+        }
 
-        public PlatformStatuses(DateTime date, PlatformStatus[] statuses)
+        public DateTime Date { get; private set; }
+        public IPlatformStatus[] Statuses { get; private set; }
+
+        public PlatformStatuses(DateTime date, IPlatformStatus[] statuses)
         {
             Date = date;
             Statuses = statuses;
         }
     }
 
-    public class PlatformStatus
+    public interface IPlatformStatus
+    {
+        string Name { get; }
+        long? Id { get; }
+        bool CompareStatus(IPlatformStatus status);
+    }
+
+    public class PlatformStatus : IPlatformStatus
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -52,7 +65,7 @@ namespace PlatformStatusTracker.Core.Data
         [JsonProperty("safari_views")]
         public ViewsStatus SafariViews { get; set; }
 
-        public virtual Boolean CompareStatus(PlatformStatus status)
+        public virtual bool CompareStatus(IPlatformStatus status)
         {
             return false;
         }
@@ -76,7 +89,7 @@ namespace PlatformStatusTracker.Core.Data
         [JsonProperty("ieStatus")]
         public IeStatus IeStatus { get; set; }
 
-        public override Boolean CompareStatus(PlatformStatus status)
+        public override bool CompareStatus(IPlatformStatus status)
         {
             var ieStatus = status as IePlatformStatus;
             return this.IeStatus.IePrefixed == ieStatus.IeStatus.IePrefixed &&
@@ -118,9 +131,11 @@ namespace PlatformStatusTracker.Core.Data
         [JsonProperty("web_dev_views")]
         public ViewsStatus WebDevViews { get; set; }
 
-        public override Boolean CompareStatus(PlatformStatus status)
+        public override bool CompareStatus(IPlatformStatus status)
         {
             var chStatus = status as ChromiumPlatformStatus;
+            if (chStatus == null) return false;
+
             return this.Prefixed == chStatus.Prefixed &&
                     this.ImplStatusChrome == chStatus.ImplStatusChrome &&
                     this.ShippedAndroidMilestone == chStatus.ShippedAndroidMilestone &&
@@ -149,14 +164,51 @@ namespace PlatformStatusTracker.Core.Data
         [JsonProperty("webkit-url")]
         public string WebKitUrl { get; set; }
 
-        public override bool CompareStatus(PlatformStatus status)
+        public override bool CompareStatus(IPlatformStatus status)
         {
             var webkitStatus = status as WebKitPlatformStatus;
-            if (webkitStatus == null)
-                return false;
+            if (webkitStatus == null) return false;
 
             return this.Status.Status == webkitStatus.Status.Status &&
                     this.Status.EnabledByDefault == webkitStatus.Status.EnabledByDefault
+                ;
+        }
+    }
+
+    public class MozillaPlatformStatuses
+    {
+        [JsonProperty("features")]
+        public MozillaPlatformStatus[] Features { get; set; }
+    }
+
+    [DebuggerDisplay("MozillaPlatformStatus: {Name}")]
+    public class MozillaPlatformStatus : IPlatformStatus
+    {
+        public long? Id { get; set; }
+
+        [JsonProperty("title")]
+        public string Name { get; set; }
+        [JsonProperty("summary")]
+        public string Summary { get; set; }
+        [JsonProperty("bugzilla")]
+        public string Bugzilla { get; set; }
+        [JsonProperty("firefox_status")]
+        public string Status { get; set; }
+        [JsonProperty("firefox_version")]
+        public string Version { get; set; }
+        [JsonProperty("firefox_channel")]
+        public string Channel { get; set; }
+        [JsonProperty("slug")]
+        public string Slug { get; set; }
+
+        public virtual bool CompareStatus(IPlatformStatus status)
+        {
+            var status2 = status as MozillaPlatformStatus;
+            if (status2 == null) return false;
+
+            return this.Status == status2.Status &&
+                    this.Version == status2.Version &&
+                    this.Channel == status2.Channel
                 ;
         }
     }

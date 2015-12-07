@@ -124,10 +124,12 @@ namespace PlatformStatusTracker.Core.Repository
         {
             return new PlatformStatuses(entity.Date,
                                         (entity.DataType == (Int32)StatusDataType.InternetExplorer)
-                                            ? (PlatformStatus[])PlatformStatuses.DeserializeForIeStatus(entity.GetContent())
+                                            ? (IPlatformStatus[])PlatformStatuses.DeserializeForIeStatus(entity.GetContent())
                                         : (entity.DataType == (Int32)StatusDataType.WebKitWebCore || entity.DataType == (Int32)StatusDataType.WebKitJavaScriptCore)
-                                            ? (PlatformStatus[])PlatformStatuses.DeserializeForWebKitStatus(entity.GetContent())
-                                            : (PlatformStatus[])PlatformStatuses.DeserializeForChromiumStatus(entity.GetContent())
+                                            ? (IPlatformStatus[])PlatformStatuses.DeserializeForWebKitStatus(entity.GetContent())
+                                        : (entity.DataType == (Int32)StatusDataType.Mozilla)
+                                            ? (IPlatformStatus[])PlatformStatuses.DeserializeForMozillaStatus(entity.GetContent())
+                                        : (IPlatformStatus[])PlatformStatuses.DeserializeForChromiumStatus(entity.GetContent())
                                         );
         }
 
@@ -138,23 +140,73 @@ namespace PlatformStatusTracker.Core.Repository
 
             public StatusDataEntity(StatusDataType dataType, DateTime date, String content)
             {
-                PartitionKey = "01_" + ((Int32)dataType).ToString();
-                RowKey = "01_" + (ConvertDateTimeToRowKey(date.Date)); // Date only
+                this.PartitionKey = "01_" + ((Int32)dataType).ToString();
+                this.RowKey = "01_" + (ConvertDateTimeToRowKey(date.Date)); // Date only
 
-                DataType = (Int32)dataType;
-                Date = date;
-                DataCompression = (Int32)DataCompressionType.Bzip2;
-                Content = Compress(Encoding.UTF8.GetBytes(content));
+                this.DataType = (Int32)dataType;
+                this.Date = date;
+                this.DataCompression = (Int32)DataCompressionType.Bzip2;
+
+                var splitSize = (1024 * 50);
+                var compressedContent = Compress(Encoding.UTF8.GetBytes(content));
+                for (var i = 0; i < Math.Ceiling(compressedContent.Length / (double)splitSize); i++)
+                {
+                    this.SplitCount = i;
+
+                    var tmpContent = new byte[Math.Min(splitSize, compressedContent.Length - (i * splitSize))];
+                    Array.Copy(compressedContent, (i * splitSize), tmpContent, 0, tmpContent.Length);
+
+                    switch (i)
+                    {
+                        case 0:
+                            Content = tmpContent;
+                            break;
+                        case 1:
+                            Content1 = tmpContent;
+                            break;
+                        case 2:
+                            Content2 = tmpContent;
+                            break;
+                        case 3:
+                            Content3 = tmpContent;
+                            break;
+                        case 4:
+                            Content4 = tmpContent;
+                            break;
+                        default:
+                            throw new Exception("data size is too large.: " + compressedContent.Length);
+                    }
+                }
             }
 
             public Byte[] Content { get; set; }
+            public Byte[] Content1 { get; set; }
+            public Byte[] Content2 { get; set; }
+            public Byte[] Content3 { get; set; }
+            public Byte[] Content4 { get; set; }
+
             public DateTime Date { get; set; }
             public Int32 DataType { get; set; }
             public Int32 DataCompression { get; set; }
+            public Int32 SplitCount { get; set; }
 
             public String GetContent()
             {
-                return Encoding.UTF8.GetString(Decompress(Content));
+                switch (this.SplitCount)
+                {
+                    case 0:
+                        return Encoding.UTF8.GetString(Decompress(Content));
+                    case 1:
+                        return Encoding.UTF8.GetString(Decompress(Content.Concat(Content1).ToArray()));
+                    case 2:
+                        return Encoding.UTF8.GetString(Decompress(Content.Concat(Content1).Concat(Content2).ToArray()));
+                    case 3:
+                        return Encoding.UTF8.GetString(Decompress(Content.Concat(Content1).Concat(Content2).Concat(Content3).ToArray()));
+                    case 4:
+                        return Encoding.UTF8.GetString(Decompress(Content.Concat(Content1).Concat(Content2).Concat(Content3).Concat(Content4).ToArray()));
+                    default:
+                        throw new Exception("splitted count is too large.: " + this.SplitCount);
+                }
             }
 
             private Byte[] Compress(Byte[] bytes)
