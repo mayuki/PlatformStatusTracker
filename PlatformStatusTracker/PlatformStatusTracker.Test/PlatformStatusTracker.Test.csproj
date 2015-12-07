@@ -64,6 +64,12 @@
     <None Include="TestData\chromestatus-com_20140531.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="TestData\mozilla-platatus_20151029_2f324f9.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestData\mozilla-platatus_20151125_888cfed.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestData\status-modern-ie_20140529.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

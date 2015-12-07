@@ -158,6 +158,45 @@
         </ul>
     </section>
 }
+@if (Model.MozillaChangeSet != null && Model.MozillaChangeSet.Changes.Any())
+{
+    <section>
+        <h1><a href="https://platform-status.mozilla.org/">Firefox</a></h1>
+        <ul>
+            @foreach (var change in Model.MozillaChangeSet.Changes.Cast<MozillaChangeInfo>())
+            {
+                if (change.IsAdded)
+                {
+                    <li class="changes_item changes_item-Added">
+                        <span class="changes_item-label">Added</span>: @MozillaUrl(change.NewStatus)
+                        <div>Status: @Value(change.NewStatus.Status)</div>
+                        <div>Channel: @Value(change.NewStatus.Channel)</div>
+                        <div>Version: @Value(change.NewStatus.Version)</div>
+                    </li>
+                }
+                if (change.IsRemoved)
+                {
+                    <li class="changes_item changes_item-Removed">
+                        <span class="changes_item-label">Removed</span>: @MozillaUrl(change.OldStatus)
+                    </li>
+                }
+                if (change.IsChanged)
+                {
+                    <li class="changes_item changes_item-Changed">
+                        <span class="changes_item-label">Changed</span>: @MozillaUrl(change.NewStatus)
+                        @ToMozillaStatusChangedInfo(change.OldStatus, change.NewStatus)
+                    </li>
+                }
+                @*
+                    <li>
+                        NewStatus: @(change.NewStatus != null ? change.NewStatus.Id.ToString() : ""),
+                        OldStatus: @(change.OldStatus != null ? change.OldStatus.Id.ToString() : "")
+                    </li>
+                *@
+            }
+        </ul>
+    </section>
+}
 @* ===== Helper Methods =========================================================================== *@
 @functions
 {
@@ -178,6 +217,18 @@
         <a href="@status.WebKitUrl">@status.Name</a>
     }
 }
+@helper MozillaUrl(MozillaPlatformStatus status)
+{
+    if (String.IsNullOrWhiteSpace(status.Slug))
+    {
+        <span>@status.Name</span>
+    }
+    else
+    {
+        <a href="https://platform-status.mozilla.org/#@status.Slug">@status.Name</a>
+    }
+}
+
 @helper ToIeStatusChangedInfo(IeStatus oldStatus, IeStatus newStatus)
 {
     if (oldStatus.Text != newStatus.Text)
@@ -241,6 +292,21 @@
     if (oldStatus.Status.Status != newStatus.Status.Status)
     {
         <div>Status: @Value(oldStatus.Status.Status) -&gt; @Value(newStatus.Status.Status)</div>
+    }
+}
+@helper ToMozillaStatusChangedInfo(MozillaPlatformStatus oldStatus, MozillaPlatformStatus newStatus)
+{
+    if (oldStatus.Status != newStatus.Status)
+    {
+        <div>Status: @Value(oldStatus.Status) -&gt; @Value(newStatus.Status)</div>
+    }
+    if (oldStatus.Channel != newStatus.Channel)
+    {
+        <div>Channel: @Value(oldStatus.Channel) -&gt; @Value(newStatus.Channel)</div>
+    }
+    if (oldStatus.Version != newStatus.Version)
+    {
+        <div>Version: @Value(oldStatus.Version) -&gt; @Value(newStatus.Version)</div>
     }
 }
 @helper Value(Int32? value)

@@ -124,10 +124,12 @@ namespace PlatformStatusTracker.Core.Repository
         {
             return new PlatformStatuses(entity.Date,
                                         (entity.DataType == (Int32)StatusDataType.InternetExplorer)
-                                            ? (PlatformStatus[])PlatformStatuses.DeserializeForIeStatus(entity.GetContent())
+                                            ? (IPlatformStatus[])PlatformStatuses.DeserializeForIeStatus(entity.GetContent())
                                         : (entity.DataType == (Int32)StatusDataType.WebKitWebCore || entity.DataType == (Int32)StatusDataType.WebKitJavaScriptCore)
-                                            ? (PlatformStatus[])PlatformStatuses.DeserializeForWebKitStatus(entity.GetContent())
-                                            : (PlatformStatus[])PlatformStatuses.DeserializeForChromiumStatus(entity.GetContent())
+                                            ? (IPlatformStatus[])PlatformStatuses.DeserializeForWebKitStatus(entity.GetContent())
+                                        : (entity.DataType == (Int32)StatusDataType.Mozilla)
+                                            ? (IPlatformStatus[])PlatformStatuses.DeserializeForMozillaStatus(entity.GetContent())
+                                        : (IPlatformStatus[])PlatformStatuses.DeserializeForChromiumStatus(entity.GetContent())
                                         );
         }
 

@@ -16,13 +16,13 @@ namespace PlatformStatusTracker.Core.Model
         /// <param name="prevStatuses"></param>
         /// <param name="currentStatuses"></param>
         /// <returns></returns>
-        public static ChangeInfo[] GetChangeInfoSetFromStatuses(PlatformStatus[] prevStatuses, PlatformStatus[] currentStatuses)
+        public static ChangeInfo[] GetChangeInfoSetFromStatuses(IPlatformStatus[] prevStatuses, IPlatformStatus[] currentStatuses)
         {
             // WORKAROUND: ie-status.json has a duplicated id.
             var prevIdAndNames = prevStatuses.Select(x => new { x.Id, x.Name }).ToLookup(k => k.Id, v => v);
             var curIdAndNames = currentStatuses.Select(x => new { x.Id, x.Name }).ToLookup(k => k.Id, v => v);
-            Func<PlatformStatus, String> prevIdMapper = (platformStatus) => prevIdAndNames[platformStatus.Id].Count() > 1 ? platformStatus.Id + "_" + platformStatus.Name : platformStatus.Id.ToString();
-            Func<PlatformStatus, String> curIdMapper = (platformStatus) => curIdAndNames[platformStatus.Id].Count() > 1 ? platformStatus.Id + "_" + platformStatus.Name : platformStatus.Id.ToString();
+            Func<IPlatformStatus, String> prevIdMapper = (platformStatus) => prevIdAndNames[platformStatus.Id].Count() > 1 ? platformStatus.Id + "_" + platformStatus.Name : platformStatus.Id.ToString();
+            Func<IPlatformStatus, String> curIdMapper = (platformStatus) => curIdAndNames[platformStatus.Id].Count() > 1 ? platformStatus.Id + "_" + platformStatus.Name : platformStatus.Id.ToString();
 
             var prevStatusIds = prevStatuses.Select(prevIdMapper).ToArray();
             var prevStatusesByName = prevStatuses.ToDictionary(prevIdMapper, v => v);

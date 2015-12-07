@@ -20,13 +20,20 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
             var chromeChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Chromium, date);
             var webkitWebCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitWebCore, date);
             var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitJavaScriptCore, date);
+            var mozillaChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Mozilla, date);
 
-            await Task.WhenAll(ieChangeSetsTask, chromeChangeSetsTask, webkitWebCoreChangeSetsTask, webkitJavaScriptCoreChangeSetsTask);
+            await Task.WhenAll(
+                ieChangeSetsTask,
+                chromeChangeSetsTask,
+                webkitWebCoreChangeSetsTask,
+                webkitJavaScriptCoreChangeSetsTask,
+                mozillaChangeSetsTask);
 
             var ieChangeSets = ieChangeSetsTask.Result;
             var chromeChangeSets = chromeChangeSetsTask.Result;
             var webkitWebCoreChangeSets = webkitWebCoreChangeSetsTask.Result;
             var webkitJavaScriptCoreChangeSets = webkitJavaScriptCoreChangeSetsTask.Result;
+            var mozillaChangeSets = mozillaChangeSetsTask.Result;
 
             return new ChangesViewModel()
             {
@@ -36,7 +43,8 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
                                  ChromeChangeSet = chromeChangeSets.Any() ? chromeChangeSets[0] : null,
                                  WebKitWebCoreChangeSet = webkitWebCoreChangeSets.Any() ? webkitWebCoreChangeSets[0] : null,
                                  WebKitJavaScriptCoreChangeSet = webkitJavaScriptCoreChangeSets.Any() ? webkitJavaScriptCoreChangeSets[0] : null,
-                             },
+                                 MozillaChangeSet = mozillaChangeSets.Any() ? mozillaChangeSets[0] : null,
+                },
                 Date = date,
             };
         }
