@@ -19,6 +19,12 @@ namespace PlatformStatusTracker.Core.Model
 
         public async Task UpdateAllAsync()
         {
+            //await UpdateChromiumAsync();
+            //await UpdateModernIeAsync();
+            //await UpdateWebKitJavaScriptCoreAsync();
+            //await UpdateWebKitWebCoreAsync();
+            //await UpdateMozillaAsync();
+
             await Task.WhenAll(UpdateChromiumAsync(), UpdateModernIeAsync(), UpdateWebKitJavaScriptCoreAsync(), UpdateWebKitWebCoreAsync(), UpdateMozillaAsync());
         }
 

@@ -15,6 +15,7 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
         public Dictionary<DateTime, ChangeSet> ChromeChangeSetsByDate { get; private set; }
         public Dictionary<DateTime, ChangeSet> WebKitWebCoreChangeSetsByDate { get; private set; }
         public Dictionary<DateTime, ChangeSet> WebKitJavaScriptCoreChangeSetsByDate { get; private set; }
+        public Dictionary<DateTime, ChangeSet> MozillaChangeSetsByDate { get; private set; }
         public DateTime[] Dates { get; private set; }
         public DateTime LastUpdatedAt { get; private set; }
 
@@ -24,14 +25,16 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
             var chromeChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Chromium);
             var webkitWebCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitWebCore);
             var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitJavaScriptCore);
+            var mozillaChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Mozilla);
             var lastUpdatedTask = statusDataRepository.GetLastUpdated();
 
-            await Task.WhenAll(ieChangeSetsTask, chromeChangeSetsTask, webkitWebCoreChangeSetsTask, webkitJavaScriptCoreChangeSetsTask, lastUpdatedTask);
+            await Task.WhenAll(ieChangeSetsTask, chromeChangeSetsTask, webkitWebCoreChangeSetsTask, webkitJavaScriptCoreChangeSetsTask, mozillaChangeSetsTask, lastUpdatedTask);
 
             var ieChangeSets = ieChangeSetsTask.Result;
             var chromeChangeSets = chromeChangeSetsTask.Result;
             var webkitWebCoreChangeSets = webkitWebCoreChangeSetsTask.Result;
             var webkitJavaScriptCoreChangeSets = webkitJavaScriptCoreChangeSetsTask.Result;
+            var mozillaChangeSets = mozillaChangeSetsTask.Result;
             var lastUpdated = lastUpdatedTask.Result;
 
             return new HomeIndexViewModel()
@@ -40,7 +43,13 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
                        ChromeChangeSetsByDate = chromeChangeSets.ToDictionary(k => k.Date, v => v),
                        WebKitWebCoreChangeSetsByDate = webkitWebCoreChangeSets.ToDictionary(k => k.Date, v => v),
                        WebKitJavaScriptCoreChangeSetsByDate = webkitJavaScriptCoreChangeSets.ToDictionary(k => k.Date, v => v),
-                       Dates = new [] { ieChangeSets, chromeChangeSets, webkitWebCoreChangeSets, webkitJavaScriptCoreChangeSets }.SelectMany(x => x).Where(x => x.Changes.Any()).Select(x => x.Date).Distinct().ToArray(),
+                       MozillaChangeSetsByDate = mozillaChangeSets.ToDictionary(k => k.Date, v => v),
+                       Dates = new [] { ieChangeSets, chromeChangeSets, webkitWebCoreChangeSets, webkitJavaScriptCoreChangeSets, mozillaChangeSets }
+                            .SelectMany(x => x)
+                            .Where(x => x.Changes.Any())
+                            .Select(x => x.Date)
+                            .Distinct()
+                            .ToArray(),
                        LastUpdatedAt = lastUpdated,
                    };
         }

@@ -54,6 +54,10 @@ namespace PlatformStatusTracker.Core.Model
             {
                 return new WebKitChangeInfo(oldStatus, newStatus);
             }
+            if (oldStatus is MozillaPlatformStatus || newStatus is MozillaPlatformStatus)
+            {
+                return new MozillaChangeInfo(oldStatus, newStatus);
+            }
             else
             {
                 return new IeChangeInfo(oldStatus, newStatus);
