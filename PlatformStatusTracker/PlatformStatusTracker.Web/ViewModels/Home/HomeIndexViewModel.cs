@@ -21,11 +21,12 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
 
         public static async Task<HomeIndexViewModel> CreateAsync(IStatusDataRepository statusDataRepository)
         {
-            var ieChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.InternetExplorer);
-            var chromeChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Chromium);
-            var webkitWebCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitWebCore);
-            var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitJavaScriptCore);
-            var mozillaChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Mozilla);
+#if !FALSE
+            var ieChangeSetsTask = GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.InternetExplorer);
+            var chromeChangeSetsTask = GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.Chromium);
+            var webkitWebCoreChangeSetsTask = GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.WebKitWebCore);
+            var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.WebKitJavaScriptCore);
+            var mozillaChangeSetsTask = GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.Mozilla);
             var lastUpdatedTask = statusDataRepository.GetLastUpdated();
 
             await Task.WhenAll(ieChangeSetsTask, chromeChangeSetsTask, webkitWebCoreChangeSetsTask, webkitJavaScriptCoreChangeSetsTask, mozillaChangeSetsTask, lastUpdatedTask);
@@ -36,6 +37,14 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
             var webkitJavaScriptCoreChangeSets = webkitJavaScriptCoreChangeSetsTask.Result;
             var mozillaChangeSets = mozillaChangeSetsTask.Result;
             var lastUpdated = lastUpdatedTask.Result;
+#else
+            var ieChangeSets = await GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.InternetExplorer);
+            var chromeChangeSets = await GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.Chromium);
+            var webkitWebCoreChangeSets = await GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.WebKitWebCore);
+            var webkitJavaScriptCoreChangeSets = await GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.WebKitJavaScriptCore);
+            var mozillaChangeSets = await GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.Mozilla);
+            var lastUpdated = await statusDataRepository.GetLastUpdated();
+#endif
 
             return new HomeIndexViewModel()
                    {
@@ -54,7 +63,7 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
                    };
         }
 
-        private static async Task<ChangeSet[]> GetChangeSetsByBrowser(IStatusDataRepository statusDataRepository, StatusDataType type)
+        private static async Task<ChangeSet[]> GetChangeSetsByBrowserAsync(IStatusDataRepository statusDataRepository, StatusDataType type)
         {
             var statusDataSet = (await statusDataRepository.GetPlatformStatusesRangeAsync(type, DateTime.UtcNow.AddMonths(-6), DateTime.UtcNow, take: 30))
                                                            .OrderByDescending(x => x.Date)

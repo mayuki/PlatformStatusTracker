@@ -56,14 +56,14 @@ namespace PlatformStatusTracker.Core.Repository
                 TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.GreaterThanOrEqual, "01_" + ConvertDateTimeToRowKey(toDate.Date)) // RowKey >= toDate.Date (Higher RowKey is older)
             );
 
-            return
-                (await table.ExecuteQuerySegmentedAsync(new TableQuery<StatusDataEntity>().Where(queryFilter).Take(take), null))
-                    .Select(x =>
+            var entities = await table.ExecuteQuerySegmentedAsync(new TableQuery<StatusDataEntity>().Where(queryFilter).Take(take), null);
+
+            var tasks = entities.Select(x =>
                     {
                         // return null if JSON data was broken.
                         try
                         {
-                            return CreatePlatformStatusesFromEntity(x);
+                            return CreatePlatformStatusesFromEntityAsync(x);
                         }
                         catch (JsonReaderException)
                         {
@@ -72,6 +72,8 @@ namespace PlatformStatusTracker.Core.Repository
                     })
                     .Where(x => x != null)
                     .ToArray();
+
+            return await Task.WhenAll(tasks);
         }
 
         public async Task InsertAsync(StatusDataType type, DateTime date, String jsonData)
@@ -120,9 +122,11 @@ namespace PlatformStatusTracker.Core.Repository
             return String.Format("{0:D19}", DateTime.MaxValue.Ticks - dateTime.Ticks);
         }
 
-        private PlatformStatuses CreatePlatformStatusesFromEntity(StatusDataEntity entity)
+        private Task<PlatformStatuses> CreatePlatformStatusesFromEntityAsync(StatusDataEntity entity)
         {
-            return new PlatformStatuses(entity.Date,
+            // Deserialization is very heavy...
+            return Task.Run(() => 
+                new PlatformStatuses(entity.Date,
                                         (entity.DataType == (Int32)StatusDataType.InternetExplorer)
                                             ? (IPlatformStatus[])PlatformStatuses.DeserializeForIeStatus(entity.GetContent())
                                         : (entity.DataType == (Int32)StatusDataType.WebKitWebCore || entity.DataType == (Int32)StatusDataType.WebKitJavaScriptCore)
@@ -130,7 +134,8 @@ namespace PlatformStatusTracker.Core.Repository
                                         : (entity.DataType == (Int32)StatusDataType.Mozilla)
                                             ? (IPlatformStatus[])PlatformStatuses.DeserializeForMozillaStatus(entity.GetContent())
                                         : (IPlatformStatus[])PlatformStatuses.DeserializeForChromiumStatus(entity.GetContent())
-                                        );
+                                        )
+            );
         }
 
         private class StatusDataEntity : TableEntity
@@ -197,19 +202,19 @@ namespace PlatformStatusTracker.Core.Repository
                     case 0:
                         return Encoding.UTF8.GetString(Decompress(Content));
                     case 1:
-                        return Encoding.UTF8.GetString(Decompress(Content.Concat(Content1).ToArray()));
+                        return Encoding.UTF8.GetString(Decompress(Content, Content1));
                     case 2:
-                        return Encoding.UTF8.GetString(Decompress(Content.Concat(Content1).Concat(Content2).ToArray()));
+                        return Encoding.UTF8.GetString(Decompress(Content, Content1, Content2));
                     case 3:
-                        return Encoding.UTF8.GetString(Decompress(Content.Concat(Content1).Concat(Content2).Concat(Content3).ToArray()));
+                        return Encoding.UTF8.GetString(Decompress(Content, Content1, Content2, Content3));
                     case 4:
-                        return Encoding.UTF8.GetString(Decompress(Content.Concat(Content1).Concat(Content2).Concat(Content3).Concat(Content4).ToArray()));
+                        return Encoding.UTF8.GetString(Decompress(Content, Content1, Content2, Content3, Content4));
                     default:
                         throw new Exception("splitted count is too large.: " + this.SplitCount);
                 }
             }
 
-            private Byte[] Compress(Byte[] bytes)
+            private byte[] Compress(byte[] bytes)
             {
                 var stream = new MemoryStream();
                 var compressStream = (DataCompression == (Int32) DataCompressionType.Gzip)
@@ -222,14 +227,19 @@ namespace PlatformStatusTracker.Core.Repository
                 return stream.ToArray();
             }
 
-            private Byte[] Decompress(Byte[] bytes)
+            private byte[] Decompress(params byte[][] bytesArray)
             {
-                var memStream = new MemoryStream();
+                var compressedStream = new MemoryStream(bytesArray.Sum(x => x.Length));
+                foreach (var bytes in bytesArray)
+                {
+                    compressedStream.Write(bytes, 0, bytes.Length);
+                }
+                compressedStream.Position = 0;
 
-                var compressedStream = new MemoryStream(bytes);
                 var uncompressStream = (DataCompression == (Int32)DataCompressionType.Gzip)
                     ? (Stream)new GZipStream(compressedStream, CompressionMode.Decompress)
                     : (Stream)new BZip2InputStream(compressedStream);
+                var decompressedStream = new MemoryStream();
 
                 while (true)
                 {
@@ -238,10 +248,10 @@ namespace PlatformStatusTracker.Core.Repository
                     if (readLen == 0)
                         break;
 
-                    memStream.Write(buffer, 0, readLen);
+                    decompressedStream.Write(buffer, 0, readLen);
                 }
 
-                return memStream.ToArray();
+                return decompressedStream.ToArray();
             }
         }
 
