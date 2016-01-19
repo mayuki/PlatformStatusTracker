@@ -64,14 +64,14 @@ namespace PlatformStatusTracker.Test
 
         //    Task.WhenAll(jsons.Select(x => new StatusDataAzureStorageRepository("").InsertAsync(StatusDataType.InternetExplorer, x.Date, x.Content))).Wait();
         //}
-        [TestMethod]
-        public void BulkInsert_3()
-        {
-            var connectionString = "";
-            Task.WhenAll(
-                new StatusDataAzureStorageRepository(connectionString).InsertAsync(StatusDataType.Mozilla, DateTime.Parse("2015/10/29"), File.ReadAllText("TestData\\mozilla-platatus_20151029_2f324f9.json")),
-                new StatusDataAzureStorageRepository(connectionString).InsertAsync(StatusDataType.Mozilla, DateTime.Parse("2015/11/25"), File.ReadAllText("TestData\\mozilla-platatus_20151125_888cfed.json"))
-            ).Wait();
-        }
+        //[TestMethod]
+        //public void BulkInsert_3()
+        //{
+        //    var connectionString = "";
+        //    Task.WhenAll(
+        //        new StatusDataAzureStorageRepository(connectionString).InsertAsync(StatusDataType.Mozilla, DateTime.Parse("2015/10/29"), File.ReadAllText("TestData\\mozilla-platatus_20151029_2f324f9.json")),
+        //        new StatusDataAzureStorageRepository(connectionString).InsertAsync(StatusDataType.Mozilla, DateTime.Parse("2015/11/25"), File.ReadAllText("TestData\\mozilla-platatus_20151125_888cfed.json"))
+        //    ).Wait();
+        //}
     }
 }
