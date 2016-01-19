@@ -5,7 +5,8 @@
 
 ## Platform data sources
 
-- http://status.modern.ie/
+- https://dev.windows.com/en-us/microsoft-edge/platform/status/
 - http://www.chromestatus.com/features
 - http://trac.webkit.org/browser/trunk/Source/WebCore/features.json
 - http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/features.json
+- https://platform-status.mozilla.org/
