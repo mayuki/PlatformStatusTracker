@@ -56,7 +56,7 @@ namespace PlatformStatusTracker.Core.Repository
                 TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.GreaterThanOrEqual, "01_" + ConvertDateTimeToRowKey(toDate.Date)) // RowKey >= toDate.Date (Higher RowKey is older)
             );
 
-            var entities = await table.ExecuteQuerySegmentedAsync(new TableQuery<StatusDataEntity>().Where(queryFilter).Take(take), null);
+            var entities = await Utility.Measure(() => table.ExecuteQuerySegmentedAsync(new TableQuery<StatusDataEntity>().Where(queryFilter).Take(take), null));
 
             var tasks = entities.Select(x =>
                     {
@@ -239,11 +239,11 @@ namespace PlatformStatusTracker.Core.Repository
                 var uncompressStream = (DataCompression == (Int32)DataCompressionType.Gzip)
                     ? (Stream)new GZipStream(compressedStream, CompressionMode.Decompress)
                     : (Stream)new BZip2InputStream(compressedStream);
-                var decompressedStream = new MemoryStream();
+                var decompressedStream = new MemoryStream(512 * 1024);
+                var buffer = new byte[1024 * 64];
 
                 while (true)
                 {
-                    var buffer = new byte[1024];
                     var readLen = uncompressStream.Read(buffer, 0, buffer.Length);
                     if (readLen == 0)
                         break;

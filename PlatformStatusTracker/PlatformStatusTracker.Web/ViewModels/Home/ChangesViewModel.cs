@@ -6,6 +6,7 @@ using System.Web;
 using PlatformStatusTracker.Core.Enum;
 using PlatformStatusTracker.Core.Model;
 using PlatformStatusTracker.Core.Repository;
+using PlatformStatusTracker.Web.Infrastracture;
 
 namespace PlatformStatusTracker.Web.ViewModels.Home
 {
@@ -22,12 +23,12 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
             var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitJavaScriptCore, date);
             var mozillaChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Mozilla, date);
 
-            await Task.WhenAll(
+            await Utility.Measure(() => Task.WhenAll(
                 ieChangeSetsTask,
                 chromeChangeSetsTask,
                 webkitWebCoreChangeSetsTask,
                 webkitJavaScriptCoreChangeSetsTask,
-                mozillaChangeSetsTask);
+                mozillaChangeSetsTask));
 
             var ieChangeSets = ieChangeSetsTask.Result;
             var chromeChangeSets = chromeChangeSetsTask.Result;
@@ -51,7 +52,7 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
 
         private static async Task<ChangeSet[]> GetChangeSetsByBrowser(IStatusDataRepository statusDataRepository, StatusDataType type, DateTime date)
         {
-            var statusDataSet = (await statusDataRepository.GetPlatformStatusesRangeAsync(type, date.AddMonths(-6), date, take: 30))
+            var statusDataSet = (await Utility.Measure(() => statusDataRepository.GetPlatformStatusesRangeAsync(type, date.AddMonths(-6), date, take: 2)))
                                                            .OrderByDescending(x => x.Date)
                                                            .Take(2)
                                                            .ToArray();

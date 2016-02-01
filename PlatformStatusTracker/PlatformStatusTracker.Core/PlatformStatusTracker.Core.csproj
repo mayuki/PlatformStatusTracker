@@ -81,6 +81,7 @@
     <Compile Include="Model\PlatformStatusTracking.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\StatusDataRepository.cs" />
+    <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Infrastracture\" />
