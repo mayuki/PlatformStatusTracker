@@ -223,6 +223,8 @@ namespace PlatformStatusTracker.Core.Data
         public string IeUnprefixed { get; set; }
         [JsonProperty("flag")]
         public bool? Flag { get; set; }
+        [JsonProperty("priority")]
+        public bool? Priority { get; set; }
     }
 
     public class ViewsStatus
