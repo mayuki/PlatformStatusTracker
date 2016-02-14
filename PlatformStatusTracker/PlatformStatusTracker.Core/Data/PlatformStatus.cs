@@ -225,7 +225,7 @@ namespace PlatformStatusTracker.Core.Data
         [JsonProperty("flag")]
         public bool? Flag { get; set; }
         [JsonProperty("priority")]
-        public string? Priority { get; set; }
+        public string Priority { get; set; }
     }
 
     public class ViewsStatus
