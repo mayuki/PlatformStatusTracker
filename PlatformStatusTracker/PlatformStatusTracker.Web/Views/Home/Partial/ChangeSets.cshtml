@@ -235,6 +235,10 @@
     {
         <div>Status: @oldStatus.Text -&gt; @newStatus.Text</div>
     }
+    if (oldStatus.Priority != newStatus.Priority)
+    {
+        <div>Priority: @Value(oldStatus.Priority) -&gt; @Value(newStatus.Priority)</div>
+    }
     if (oldStatus.IePrefixed != newStatus.IePrefixed)
     {
         <div>Prefixed: @Value(oldStatus.IePrefixed) -&gt; @Value(newStatus.IePrefixed)</div>
