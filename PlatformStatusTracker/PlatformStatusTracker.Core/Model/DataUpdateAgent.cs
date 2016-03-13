@@ -63,7 +63,7 @@ namespace PlatformStatusTracker.Core.Model
         public async Task UpdateMozillaAsync()
         {
             var httpClient = new HttpClient();
-            var data = await httpClient.GetStringAsync("https://platform-status.mozilla.org/status.json");
+            var data = await httpClient.GetStringAsync("https://platform-status.mozilla.org/api/status");
 
             await _statusDataRepository.InsertAsync(StatusDataType.Mozilla, DateTime.UtcNow.Date, data);
         }

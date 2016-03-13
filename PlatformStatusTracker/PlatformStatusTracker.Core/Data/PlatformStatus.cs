@@ -28,7 +28,12 @@ namespace PlatformStatusTracker.Core.Data
         public static MozillaPlatformStatus[] DeserializeForMozillaStatus(string jsonValue)
         {
             var statuses = JsonConvert.DeserializeObject<MozillaPlatformStatuses>(jsonValue);
-            return statuses.Features;
+            if (statuses.Features != null)
+            {
+                return statuses.Features;
+            }
+
+            return JsonConvert.DeserializeObject<Dictionary<string, MozillaPlatformStatus>>(jsonValue).Values.ToArray();
         }
 
         public DateTime Date { get; private set; }
