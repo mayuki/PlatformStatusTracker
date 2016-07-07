@@ -58,22 +58,20 @@ namespace PlatformStatusTracker.Core.Repository
 
             var entities = await Utility.Measure(() => table.ExecuteQuerySegmentedAsync(new TableQuery<StatusDataEntity>().Where(queryFilter).Take(take), null));
 
-            var tasks = entities.Select(x =>
+            var tasks = entities.Select(async x =>
                     {
                         // return null if JSON data was broken.
                         try
                         {
-                            return CreatePlatformStatusesFromEntityAsync(x);
+                            return await CreatePlatformStatusesFromEntityAsync(x);
                         }
                         catch (JsonReaderException)
                         {
                             return null;
                         }
-                    })
-                    .Where(x => x != null)
-                    .ToArray();
+                    });
 
-            return await Task.WhenAll(tasks);
+            return (await Task.WhenAll(tasks)).Where(x => x != null).ToArray();
         }
 
         public async Task InsertAsync(StatusDataType type, DateTime date, String jsonData)
