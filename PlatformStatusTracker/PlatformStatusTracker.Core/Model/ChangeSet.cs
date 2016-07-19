@@ -22,9 +22,27 @@ namespace PlatformStatusTracker.Core.Model
 
         public static ChangeSet[] GetChangeSetsFromPlatformStatuses(PlatformStatuses[] platformStatuses)
         {
+            // FIXME: We must handle unexpected errors.
             return Enumerable.Range(0, platformStatuses.Length - 1)
                              .Select(x => new { New = platformStatuses[x], Old = platformStatuses[x + 1] })
-                             .Select(x => new ChangeSet() { Date = x.New.Date, Changes = PlatformStatusTracking.GetChangeInfoSetFromStatuses(x.Old.Statuses, x.New.Statuses) })
+                             .Select(x =>
+                             {
+                                 try
+                                 {
+                                     return new ChangeSet()
+                                     {
+                                         Date = x.New.Date,
+                                         Changes =
+                                             PlatformStatusTracking.GetChangeInfoSetFromStatuses(x.Old.Statuses,
+                                                 x.New.Statuses)
+                                     };
+                                 }
+                                 catch (Exception)
+                                 {
+                                     return null;
+                                 }
+                             })
+                             .Where(x => x != null)
                              .ToArray();
         }
     }
