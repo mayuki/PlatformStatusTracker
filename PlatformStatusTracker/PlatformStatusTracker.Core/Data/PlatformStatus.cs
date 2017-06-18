@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using PlatformStatusTracker.Core.Enum;
 
 namespace PlatformStatusTracker.Core.Data
 {
@@ -43,6 +44,19 @@ namespace PlatformStatusTracker.Core.Data
         {
             Date = date;
             Statuses = statuses;
+        }
+
+        public static IPlatformStatus[] Deserialize(StatusDataType dataType, string jsonValue)
+        {
+            switch (dataType)
+            {
+                case StatusDataType.Chromium: return DeserializeForChromiumStatus(jsonValue);
+                case StatusDataType.InternetExplorer: return DeserializeForIeStatus(jsonValue);
+                case StatusDataType.WebKitWebCore: return DeserializeForWebKitStatus(jsonValue);
+                case StatusDataType.WebKitJavaScriptCore: return DeserializeForWebKitStatus(jsonValue);
+                case StatusDataType.Mozilla: return DeserializeForMozillaStatus(jsonValue);
+                default: throw new NotSupportedException();
+            }
         }
     }
 
@@ -115,7 +129,7 @@ namespace PlatformStatusTracker.Core.Data
         [JsonProperty("ie_views")]
         public ViewsStatus IeViews { get; set; }
         [JsonProperty("prefixed")]
-        public bool Prefixed { get; set; }
+        public bool _Prefixed { get; set; }
 
         [JsonProperty("shipped_android_milestone")]
         public int? ShippedAndroidMilestone { get; set; }
@@ -137,20 +151,57 @@ namespace PlatformStatusTracker.Core.Data
         [JsonProperty("web_dev_views")]
         public ViewsStatus WebDevViews { get; set; }
 
+        // 2017-06-14
+        [JsonProperty("browsers")]
+        public BrowserStatus Browsers { get; set; }
+
         public override bool CompareStatus(IPlatformStatus status)
         {
             var chStatus = status as ChromiumPlatformStatus;
             if (chStatus == null) return false;
 
             return this.Prefixed == chStatus.Prefixed &&
-                    this.ImplStatusChrome == chStatus.ImplStatusChrome &&
-                    this.ShippedAndroidMilestone == chStatus.ShippedAndroidMilestone &&
-                    this.ShippedIosMilestone == chStatus.ShippedIosMilestone &&
-                    this.ShippedMilestone == chStatus.ShippedMilestone &&
-                    this.ShippedOperaAndroidMilestone == chStatus.ShippedOperaAndroidMilestone &&
-                    this.ShippedOperaMilestone == chStatus.ShippedOperaMilestone &&
-                    this.ShippedWebViewMilestone == chStatus.ShippedWebViewMilestone
+                    this.Flag == chStatus.Flag &&
+                    this.Status == chStatus.Status &&
+                    this.Android == chStatus.Android &&
+                    this.Ios == chStatus.Ios &&
+                    this.Desktop == chStatus.Desktop
                 ;
+        }
+
+        public bool Flag => Browsers?.Chrome?.Flag ?? false;
+        public bool Prefixed => Browsers?.Chrome?.Prefixed ?? _Prefixed;
+        public string Status => Browsers?.Chrome?.Status?.Text ?? ImplStatusChrome;
+        public int? Android => Browsers?.Chrome?.Android ?? ShippedAndroidMilestone;
+        public int? Ios => Browsers?.Chrome?.Ios ?? ShippedIosMilestone;
+        public int? Desktop => Browsers?.Chrome?.Desktop ?? ShippedMilestone;
+
+        public class BrowserStatus
+        {
+            [JsonProperty("chrome")]
+            public ChromeStatus Chrome { get; set; }
+        }
+        public class ChromeStatus
+        {
+            [JsonProperty("status")]
+            public ChromeStatusStatus Status { get; set; }
+            [JsonProperty("prefixed")]
+            public bool Prefixed { get; set; }
+            [JsonProperty("flag")]
+            public bool Flag { get; set; }
+            [JsonProperty("bug")]
+            public string Bug { get; set; }
+            [JsonProperty("android")]
+            public int? Android { get; set; }
+            [JsonProperty("desktop")]
+            public int? Desktop { get; set; }
+            [JsonProperty("ios")]
+            public int? Ios { get; set; }
+        }
+        public class ChromeStatusStatus
+        {
+            [JsonProperty("text")]
+            public string Text { get; set; }
         }
     }
 

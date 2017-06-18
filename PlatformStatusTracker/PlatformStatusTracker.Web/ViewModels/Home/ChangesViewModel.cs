@@ -15,22 +15,22 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
         public ChangeSetsViewModel ChangeSets { get; private set; }
         public DateTime Date { get; private set; }
 
-        public static async Task<ChangesViewModel> CreateAsync(IStatusDataRepository statusDataRepository, DateTime date)
+        public static async Task<ChangesViewModel> CreateAsync(IChangeSetRepository changeSetRepository, DateTime date)
         {
-            var ieChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.InternetExplorer, date);
-            var chromeChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Chromium, date);
-            var webkitWebCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitWebCore, date);
-            var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.WebKitJavaScriptCore, date);
-            var mozillaChangeSetsTask = GetChangeSetsByBrowser(statusDataRepository, StatusDataType.Mozilla, date);
+            var edgeChangeSetsTask = GetChangeSetsByBrowser(changeSetRepository, StatusDataType.Edge, date);
+            var chromeChangeSetsTask = GetChangeSetsByBrowser(changeSetRepository, StatusDataType.Chromium, date);
+            var webkitWebCoreChangeSetsTask = GetChangeSetsByBrowser(changeSetRepository, StatusDataType.WebKitWebCore, date);
+            var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowser(changeSetRepository, StatusDataType.WebKitJavaScriptCore, date);
+            var mozillaChangeSetsTask = GetChangeSetsByBrowser(changeSetRepository, StatusDataType.Mozilla, date);
 
             await Utility.Measure(() => Task.WhenAll(
-                ieChangeSetsTask,
+                edgeChangeSetsTask,
                 chromeChangeSetsTask,
                 webkitWebCoreChangeSetsTask,
                 webkitJavaScriptCoreChangeSetsTask,
                 mozillaChangeSetsTask));
 
-            var ieChangeSets = ieChangeSetsTask.Result;
+            var edgeChangeSets = edgeChangeSetsTask.Result;
             var chromeChangeSets = chromeChangeSetsTask.Result;
             var webkitWebCoreChangeSets = webkitWebCoreChangeSetsTask.Result;
             var webkitJavaScriptCoreChangeSets = webkitJavaScriptCoreChangeSetsTask.Result;
@@ -40,7 +40,7 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
             {
                 ChangeSets = new ChangeSetsViewModel()
                              {
-                                 IeChangeSet = ieChangeSets.Any() ? ieChangeSets[0] : null,
+                                 IeChangeSet = edgeChangeSets.Any() ? edgeChangeSets[0] : null,
                                  ChromeChangeSet = chromeChangeSets.Any() ? chromeChangeSets[0] : null,
                                  WebKitWebCoreChangeSet = webkitWebCoreChangeSets.Any() ? webkitWebCoreChangeSets[0] : null,
                                  WebKitJavaScriptCoreChangeSet = webkitJavaScriptCoreChangeSets.Any() ? webkitJavaScriptCoreChangeSets[0] : null,
@@ -50,19 +50,11 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
             };
         }
 
-        private static async Task<ChangeSet[]> GetChangeSetsByBrowser(IStatusDataRepository statusDataRepository, StatusDataType type, DateTime date)
+        private static async Task<ChangeSet[]> GetChangeSetsByBrowser(IChangeSetRepository changeSetRepository, StatusDataType type, DateTime date)
         {
-            var statusDataSet = (await Utility.Measure(() => statusDataRepository.GetPlatformStatusesRangeAsync(type, date.AddMonths(-6), date, take: 2)))
+            return (await Utility.Measure(() => changeSetRepository.GetChangeSetsRangeAsync(type, date.AddMonths(-6), date, take: 1)))
                                                            .OrderByDescending(x => x.Date)
-                                                           .Take(2)
                                                            .ToArray();
-
-            if (statusDataSet.Length < 2)
-            {
-                return new ChangeSet[0];
-            }
-
-            return ChangeSet.GetChangeSetsFromPlatformStatuses(statusDataSet);
         }
     }
 }

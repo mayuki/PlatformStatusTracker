@@ -43,6 +43,8 @@ namespace PlatformStatusTracker.Web.App_Start
 
             //container.RegisterType<IStatusDataRepository, StatusDataTestRepository>();
             container.RegisterType<IStatusDataRepository, StatusDataAzureStorageRepository>(new InjectionConstructor(ConfigurationManager.AppSettings["PlatformStatusTracker:Repository:AzureStoreageConnectionString"]));
+            container.RegisterType<IChangeSetRepository, ChangeSetAzureStorageRepository>(new InjectionConstructor(ConfigurationManager.AppSettings["PlatformStatusTracker:Repository:AzureStoreageV2ConnectionString"]));
+            container.RegisterType<IStatusRawDataRepository, StatusRawDataAzureStorageRepository>(new InjectionConstructor(ConfigurationManager.AppSettings["PlatformStatusTracker:Repository:AzureStoreageV2ConnectionString"]));
 
             ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(container));
         }

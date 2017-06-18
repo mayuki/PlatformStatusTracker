@@ -18,7 +18,12 @@ namespace PlatformStatusTracker.Core.Model
         /// <summary>
         /// List of changed statuses.
         /// </summary>
-        public ChangeInfo[] Changes { get; set; }
+        public IChangeInfo[] Changes { get; set; }
+
+        /// <summary>
+        /// Status changed from date.
+        /// </summary>
+        public DateTime From { get; set; }
 
         public static ChangeSet[] GetChangeSetsFromPlatformStatuses(PlatformStatuses[] platformStatuses)
         {
@@ -47,77 +52,82 @@ namespace PlatformStatusTracker.Core.Model
         }
     }
 
-    public class ChangeInfo
+    public interface IChangeInfo
     {
-        public IPlatformStatus OldStatus { get; set; }
-        public IPlatformStatus NewStatus { get; set; }
+        IPlatformStatus OldStatus { get; }
+        IPlatformStatus NewStatus { get; }
 
-        public Boolean IsChanged { get { return OldStatus != null && NewStatus != null; } }
-        public Boolean IsAdded { get { return OldStatus == null && NewStatus != null; } }
-        public Boolean IsRemoved { get { return OldStatus != null && NewStatus == null; } }
+        Boolean IsChanged { get; }
+        Boolean IsAdded { get; }
+        Boolean IsRemoved { get; }
+    }
 
-        public ChangeInfo(IPlatformStatus oldStatus, IPlatformStatus newStatus)
+    public abstract class ChangeInfo<T> : IChangeInfo where T:IPlatformStatus
+    {
+        public T OldStatus { get; set; }
+        public T NewStatus { get; set; }
+
+        public Boolean IsChanged => OldStatus != null && NewStatus != null;
+        public Boolean IsAdded => OldStatus == null && NewStatus != null;
+        public Boolean IsRemoved => OldStatus != null && NewStatus == null;
+
+        IPlatformStatus IChangeInfo.OldStatus => OldStatus;
+        IPlatformStatus IChangeInfo.NewStatus => NewStatus;
+
+        public ChangeInfo(T oldStatus, T newStatus)
         {
             OldStatus = oldStatus;
             NewStatus = newStatus;
         }
+    }
 
-        public static ChangeInfo Create(IPlatformStatus oldStatus, IPlatformStatus newStatus)
+    public static class ChangeInfo
+    {
+
+        public static IChangeInfo Create(IPlatformStatus oldStatus, IPlatformStatus newStatus)
         {
             if (oldStatus is ChromiumPlatformStatus || newStatus is ChromiumPlatformStatus)
             {
-                return new ChromiumChangeInfo(oldStatus, newStatus);
+                return new ChromiumChangeInfo(oldStatus as ChromiumPlatformStatus, newStatus as ChromiumPlatformStatus);
             }
             if (oldStatus is WebKitPlatformStatus || newStatus is WebKitPlatformStatus)
             {
-                return new WebKitChangeInfo(oldStatus, newStatus);
+                return new WebKitChangeInfo(oldStatus as WebKitPlatformStatus, newStatus as WebKitPlatformStatus);
             }
             if (oldStatus is MozillaPlatformStatus || newStatus is MozillaPlatformStatus)
             {
-                return new MozillaChangeInfo(oldStatus, newStatus);
+                return new MozillaChangeInfo(oldStatus as MozillaPlatformStatus, newStatus as MozillaPlatformStatus);
             }
             else
             {
-                return new IeChangeInfo(oldStatus, newStatus);
+                return new IeChangeInfo(oldStatus as IePlatformStatus, newStatus as IePlatformStatus);
             }
         }
     }
-    public class IeChangeInfo : ChangeInfo
+
+    public class IeChangeInfo : ChangeInfo<IePlatformStatus>
     {
-        public IeChangeInfo(IPlatformStatus oldStatus, IPlatformStatus newStatus)
+        public IeChangeInfo(IePlatformStatus oldStatus, IePlatformStatus newStatus)
             : base(oldStatus, newStatus)
         {}
-
-        public IePlatformStatus OldStatus { get { return base.OldStatus as IePlatformStatus; } }
-        public IePlatformStatus NewStatus { get { return base.NewStatus as IePlatformStatus; } }
     }
-    public class ChromiumChangeInfo : ChangeInfo
+    public class ChromiumChangeInfo : ChangeInfo<ChromiumPlatformStatus>
     {
-        public ChromiumChangeInfo(IPlatformStatus oldStatus, IPlatformStatus newStatus)
+        public ChromiumChangeInfo(ChromiumPlatformStatus oldStatus, ChromiumPlatformStatus newStatus)
             : base(oldStatus, newStatus)
         {}
-
-        public ChromiumPlatformStatus OldStatus { get { return base.OldStatus as ChromiumPlatformStatus; } }
-        public ChromiumPlatformStatus NewStatus { get { return base.NewStatus as ChromiumPlatformStatus; } }
     }
-    public class WebKitChangeInfo : ChangeInfo
+    public class WebKitChangeInfo : ChangeInfo<WebKitPlatformStatus>
     {
-        public WebKitChangeInfo(IPlatformStatus oldStatus, IPlatformStatus newStatus)
+        public WebKitChangeInfo(WebKitPlatformStatus oldStatus, WebKitPlatformStatus newStatus)
             : base(oldStatus, newStatus)
         { }
-
-        public WebKitPlatformStatus OldStatus { get { return base.OldStatus as WebKitPlatformStatus; } }
-        public WebKitPlatformStatus NewStatus { get { return base.NewStatus as WebKitPlatformStatus; } }
     }
 
-    public class MozillaChangeInfo : ChangeInfo
+    public class MozillaChangeInfo : ChangeInfo<MozillaPlatformStatus>
     {
-        public MozillaChangeInfo(IPlatformStatus oldStatus, IPlatformStatus newStatus)
+        public MozillaChangeInfo(MozillaPlatformStatus oldStatus, MozillaPlatformStatus newStatus)
             : base(oldStatus, newStatus)
         { }
-
-        public MozillaPlatformStatus OldStatus { get { return base.OldStatus as MozillaPlatformStatus; } }
-        public MozillaPlatformStatus NewStatus { get { return base.NewStatus as MozillaPlatformStatus; } }
-
     }
 }

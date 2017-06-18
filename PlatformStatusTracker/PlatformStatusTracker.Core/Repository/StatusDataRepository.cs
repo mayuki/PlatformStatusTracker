@@ -74,6 +74,36 @@ namespace PlatformStatusTracker.Core.Repository
             return (await Task.WhenAll(tasks)).Where(x => x != null).ToArray();
         }
 
+        public async Task<StatusDataRaw[]> GetPlatformStatusesRawRangeAsync(StatusDataType type, DateTime fromDate, DateTime toDate, Int32 take = 30)
+        {
+            if (fromDate > toDate)
+                throw new ArgumentException("fromDate parameter must be before toDate.");
+
+            var table = await CreateOrGetTable();
+            var queryFilter = TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.LessThan, "02_"); // 01_*
+
+            queryFilter = TableQuery.CombineFilters(
+                queryFilter,
+                TableOperators.And,
+                TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "01_" + (Int32)type)
+            );
+
+            queryFilter = TableQuery.CombineFilters(
+                queryFilter,
+                TableOperators.And,
+                TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.LessThanOrEqual, "01_" + ConvertDateTimeToRowKey(fromDate.Date)) // RowKey <= fromDate.Date (Higher RowKey is older)
+            );
+            queryFilter = TableQuery.CombineFilters(
+                queryFilter,
+                TableOperators.And,
+                TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.GreaterThanOrEqual, "01_" + ConvertDateTimeToRowKey(toDate.Date)) // RowKey >= toDate.Date (Higher RowKey is older)
+            );
+
+            var entities = await Utility.Measure(() => table.ExecuteQuerySegmentedAsync(new TableQuery<StatusDataEntity>().Where(queryFilter).Take(take), null));
+
+            return entities.Select(x => new StatusDataRaw(type, x.GetContent(), x.Date)).ToArray();
+        }
+
         public async Task InsertAsync(StatusDataType type, DateTime date, String jsonData)
         {
             var table = await CreateOrGetTable();
@@ -134,6 +164,19 @@ namespace PlatformStatusTracker.Core.Repository
                                         : (IPlatformStatus[])PlatformStatuses.DeserializeForChromiumStatus(entity.GetContent())
                                         )
             );
+        }
+
+        public class StatusDataRaw
+        {
+            public string Data { get; }
+            public DateTime Date { get; }
+            public StatusDataType DataType { get; }
+            public StatusDataRaw(StatusDataType dataType, string data, DateTime date)
+            {
+                DataType = dataType;
+                Data = data;
+                Date = date;
+            }
         }
 
         private class StatusDataEntity : TableEntity

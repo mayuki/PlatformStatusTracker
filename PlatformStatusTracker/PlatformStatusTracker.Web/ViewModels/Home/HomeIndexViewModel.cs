@@ -19,41 +19,40 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
         public DateTime[] Dates { get; private set; }
         public DateTime LastUpdatedAt { get; private set; }
 
-        public static async Task<HomeIndexViewModel> CreateAsync(IStatusDataRepository statusDataRepository)
+        public static async Task<HomeIndexViewModel> CreateAsync(IChangeSetRepository changeSetRepository)
         {
 #if !FALSE
-            var ieChangeSetsTask = GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.InternetExplorer);
-            var chromeChangeSetsTask = GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.Chromium);
-            var webkitWebCoreChangeSetsTask = GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.WebKitWebCore);
-            var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.WebKitJavaScriptCore);
-            var mozillaChangeSetsTask = GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.Mozilla);
-            var lastUpdatedTask = statusDataRepository.GetLastUpdated();
+            var edgeChangeSetsTask = GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.Edge);
+            var chromeChangeSetsTask = GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.Chromium);
+            var webkitWebCoreChangeSetsTask = GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.WebKitWebCore);
+            var webkitJavaScriptCoreChangeSetsTask = GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.WebKitJavaScriptCore);
+            var mozillaChangeSetsTask = GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.Mozilla);
 
-            await Task.WhenAll(ieChangeSetsTask, chromeChangeSetsTask, webkitWebCoreChangeSetsTask, webkitJavaScriptCoreChangeSetsTask, mozillaChangeSetsTask, lastUpdatedTask);
+            await Task.WhenAll(edgeChangeSetsTask, chromeChangeSetsTask, webkitWebCoreChangeSetsTask, webkitJavaScriptCoreChangeSetsTask, mozillaChangeSetsTask);
 
-            var ieChangeSets = ieChangeSetsTask.Result;
+            var edgeChangeSets = edgeChangeSetsTask.Result;
             var chromeChangeSets = chromeChangeSetsTask.Result;
             var webkitWebCoreChangeSets = webkitWebCoreChangeSetsTask.Result;
             var webkitJavaScriptCoreChangeSets = webkitJavaScriptCoreChangeSetsTask.Result;
             var mozillaChangeSets = mozillaChangeSetsTask.Result;
-            var lastUpdated = lastUpdatedTask.Result;
+            var lastUpdated = edgeChangeSets.First().Date;
 #else
-            var ieChangeSets = await GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.InternetExplorer);
-            var chromeChangeSets = await GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.Chromium);
-            var webkitWebCoreChangeSets = await GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.WebKitWebCore);
-            var webkitJavaScriptCoreChangeSets = await GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.WebKitJavaScriptCore);
-            var mozillaChangeSets = await GetChangeSetsByBrowserAsync(statusDataRepository, StatusDataType.Mozilla);
+            var ieChangeSets = await GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.InternetExplorer);
+            var chromeChangeSets = await GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.Chromium);
+            var webkitWebCoreChangeSets = await GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.WebKitWebCore);
+            var webkitJavaScriptCoreChangeSets = await GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.WebKitJavaScriptCore);
+            var mozillaChangeSets = await GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.Mozilla);
             var lastUpdated = await statusDataRepository.GetLastUpdated();
 #endif
 
             return new HomeIndexViewModel()
                    {
-                       IeChangeSetsByDate = ieChangeSets.ToDictionary(k => k.Date, v => v),
+                       IeChangeSetsByDate = edgeChangeSets.ToDictionary(k => k.Date, v => v),
                        ChromeChangeSetsByDate = chromeChangeSets.ToDictionary(k => k.Date, v => v),
                        WebKitWebCoreChangeSetsByDate = webkitWebCoreChangeSets.ToDictionary(k => k.Date, v => v),
                        WebKitJavaScriptCoreChangeSetsByDate = webkitJavaScriptCoreChangeSets.ToDictionary(k => k.Date, v => v),
                        MozillaChangeSetsByDate = mozillaChangeSets.ToDictionary(k => k.Date, v => v),
-                       Dates = new [] { ieChangeSets, chromeChangeSets, webkitWebCoreChangeSets, webkitJavaScriptCoreChangeSets, mozillaChangeSets }
+                       Dates = new [] { edgeChangeSets, chromeChangeSets, webkitWebCoreChangeSets, webkitJavaScriptCoreChangeSets, mozillaChangeSets }
                             .SelectMany(x => x)
                             .Where(x => x.Changes.Any())
                             .Select(x => x.Date)
@@ -63,18 +62,11 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
                    };
         }
 
-        private static async Task<ChangeSet[]> GetChangeSetsByBrowserAsync(IStatusDataRepository statusDataRepository, StatusDataType type)
+        private static async Task<ChangeSet[]> GetChangeSetsByBrowserAsync(IChangeSetRepository changeSetRepository, StatusDataType type)
         {
-            var statusDataSet = (await statusDataRepository.GetPlatformStatusesRangeAsync(type, DateTime.UtcNow.AddMonths(-6), DateTime.UtcNow, take: 30))
+            return (await changeSetRepository.GetChangeSetsRangeAsync(type, DateTime.UtcNow.AddMonths(-6), DateTime.UtcNow, take: 30))
                                                            .OrderByDescending(x => x.Date)
                                                            .ToArray();
-
-            if (statusDataSet.Length < 2)
-            {
-                return new ChangeSet[0];
-            }
-
-            return ChangeSet.GetChangeSetsFromPlatformStatuses(statusDataSet);
         }
     }
 }
