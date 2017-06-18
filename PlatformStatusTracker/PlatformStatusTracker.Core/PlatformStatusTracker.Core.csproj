@@ -33,6 +33,9 @@
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="LZ4, Version=1.0.15.93, Culture=neutral, PublicKeyToken=62e1b5ec1eec9bdd, processorArchitecture=MSIL">
+      <HintPath>..\packages\lz4net.1.0.15.93\lib\net4-client\LZ4.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Data.Edm">
       <HintPath>..\packages\Microsoft.Data.Edm.5.6.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
       <Private>True</Private>
@@ -80,7 +83,9 @@
     <Compile Include="Model\DataUpdateAgent.cs" />
     <Compile Include="Model\PlatformStatusTracking.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\ChangeSetRepository.cs" />
     <Compile Include="Repository\StatusDataRepository.cs" />
+    <Compile Include="Repository\StatusRawDataRepository.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>

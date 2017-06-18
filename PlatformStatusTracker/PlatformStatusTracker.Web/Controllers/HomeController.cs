@@ -18,7 +18,7 @@ namespace PlatformStatusTracker.Web.Controllers
         [OutputCache(CacheProfile = "Home_IndexAndFeed")]
         public async Task<ActionResult> Index()
         {
-            var viewModel = await HomeIndexViewModel.CreateAsync(ServiceLocator.GetInstance<IStatusDataRepository>());
+            var viewModel = await HomeIndexViewModel.CreateAsync(ServiceLocator.GetInstance<IChangeSetRepository>());
 
             return View(viewModel);
         }
@@ -28,7 +28,7 @@ namespace PlatformStatusTracker.Web.Controllers
         [OutputCache(CacheProfile = "Home_IndexAndFeed")]
         public async Task<ActionResult> Feed()
         {
-            var viewModel = await HomeIndexViewModel.CreateAsync(ServiceLocator.GetInstance<IStatusDataRepository>());
+            var viewModel = await HomeIndexViewModel.CreateAsync(ServiceLocator.GetInstance<IChangeSetRepository>());
 
             return View(viewModel);
         }
@@ -48,7 +48,7 @@ namespace PlatformStatusTracker.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            var viewModel = await ChangesViewModel.CreateAsync(ServiceLocator.GetInstance<IStatusDataRepository>(), dateTime);
+            var viewModel = await ChangesViewModel.CreateAsync(ServiceLocator.GetInstance<IChangeSetRepository>(), dateTime);
             return View(viewModel);
         }
 
