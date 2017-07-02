@@ -11,7 +11,7 @@ using PlatformStatusTracker.Core.Repository;
 using PlatformStatusTracker.Core.Configuration;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace WebApplication11
+namespace PlatformStatusTracker.Web
 {
     public class Startup
     {
