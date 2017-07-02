@@ -1,4 +1,4 @@
-﻿@model PlatformStatusTracker.Web.ViewModels.Home.ChangesTableRowViewModel
+﻿@model IEnumerable<PlatformStatusTracker.Web.ViewModels.Home.ChangesTableRowViewModel>
 @functions
 {
     string Value(object value)
@@ -14,25 +14,27 @@
         }
     }
 }
-
-@if (Model.IsNewOnly)
+@foreach (var item in Model)
 {
-    <tr>
-        <th>@Model.Title</th>
-        <td>@Value(Model.New)</td>
-    </tr>
-}
-else
-{
-    var oldText = Value(Model.Old);
-    var newText = Value(Model.New);
-    if (oldText != newText)
+    if (item.IsNewOnly && item.New != null)
     {
-    <tr>
-        <th>@Model.Title</th>
-        <td>@oldText</td>
-        <td>→</td>
-        <td>@newText</td>
-    </tr>
+        <tr>
+            <th>@item.Title</th>
+            <td>@Value(item.New)</td>
+        </tr>
+    }
+    else
+    {
+        var oldText = Value(item.Old);
+        var newText = Value(item.New);
+        if (oldText != newText)
+        {
+        <tr>
+            <th>@item.Title</th>
+            <td>@oldText</td>
+            <td>→</td>
+            <td>@newText</td>
+        </tr>
+        }
     }
 }
