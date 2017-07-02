@@ -1,0 +1,38 @@
+﻿@model PlatformStatusTracker.Web.ViewModels.Home.ChangesTableRowViewModel
+@functions
+{
+    string Value(object value)
+    {
+        switch (value)
+        {
+            case int v:
+                return v.ToString();
+            case bool v:
+                return v.ToString();
+            default:
+                return value == null ? "(n/a)" : value.ToString();
+        }
+    }
+}
+
+@if (Model.IsNewOnly)
+{
+    <tr>
+        <th>@Model.Title</th>
+        <td>@Value(Model.New)</td>
+    </tr>
+}
+else
+{
+    var oldText = Value(Model.Old);
+    var newText = Value(Model.New);
+    if (oldText != newText)
+    {
+    <tr>
+        <th>@Model.Title</th>
+        <td>@oldText</td>
+        <td>→</td>
+        <td>@newText</td>
+    </tr>
+    }
+}

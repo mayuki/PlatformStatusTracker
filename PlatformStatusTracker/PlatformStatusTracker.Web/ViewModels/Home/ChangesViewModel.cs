@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
+﻿using PlatformStatusTracker.Core;
 using PlatformStatusTracker.Core.Enum;
 using PlatformStatusTracker.Core.Model;
 using PlatformStatusTracker.Core.Repository;
-using PlatformStatusTracker.Web.Infrastracture;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PlatformStatusTracker.Web.ViewModels.Home
 {
@@ -39,12 +38,12 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
             return new ChangesViewModel()
             {
                 ChangeSets = new ChangeSetsViewModel()
-                             {
-                                 IeChangeSet = edgeChangeSets.Any() ? edgeChangeSets[0] : null,
-                                 ChromeChangeSet = chromeChangeSets.Any() ? chromeChangeSets[0] : null,
-                                 WebKitWebCoreChangeSet = webkitWebCoreChangeSets.Any() ? webkitWebCoreChangeSets[0] : null,
-                                 WebKitJavaScriptCoreChangeSet = webkitJavaScriptCoreChangeSets.Any() ? webkitJavaScriptCoreChangeSets[0] : null,
-                                 MozillaChangeSet = mozillaChangeSets.Any() ? mozillaChangeSets[0] : null,
+                {
+                    IeChangeSet = edgeChangeSets.Any() ? edgeChangeSets[0] : null,
+                    ChromeChangeSet = chromeChangeSets.Any() ? chromeChangeSets[0] : null,
+                    WebKitWebCoreChangeSet = webkitWebCoreChangeSets.Any() ? webkitWebCoreChangeSets[0] : null,
+                    WebKitJavaScriptCoreChangeSet = webkitJavaScriptCoreChangeSets.Any() ? webkitJavaScriptCoreChangeSets[0] : null,
+                    MozillaChangeSet = mozillaChangeSets.Any() ? mozillaChangeSets[0] : null,
                 },
                 Date = date,
             };

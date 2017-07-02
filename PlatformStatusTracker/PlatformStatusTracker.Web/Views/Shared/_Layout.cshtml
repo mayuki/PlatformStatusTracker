@@ -1,14 +1,22 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@(String.IsNullOrWhiteSpace(ViewBag.Title) ? "" : ViewBag.Title + " - ")Browser Platform Status Tracker</title>
     <link rel="alternate" type="application/atom+xml" title="Browser Platform Status Tracker" href="@Url.Action("Feed", "Home", new object(), "http")" />
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    <environment names="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+
     @RenderSection("LocalResources", required: false)
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -21,6 +29,7 @@
     </script>
     <script src="//use.typekit.net/emv6mtj.js"></script>
     <script>try{Typekit.load();}catch(e){}</script>
+    @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body>
     @*

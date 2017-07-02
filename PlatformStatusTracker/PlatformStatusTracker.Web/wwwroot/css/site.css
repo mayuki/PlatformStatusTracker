@@ -1,0 +1,133 @@
+﻿/*
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+    */
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+h1 {
+    font-family: 'Segoe UI', 'myriad-pro',sans-serif;
+}
+    .container > header > h1 {
+        font-size: 2.5em;
+        font-family: 'Segoe UI Light', 'myriad-pro',sans-serif;
+        margin-bottom: 1em;
+        text-align: center;
+    }
+    main > article > h1 {
+        font-size: 1.75em;
+        margin-top: 3rem;
+        position: sticky;
+        z-index: 2;
+        top: 0;
+        background: #fff;
+        padding: 1rem 0;
+    }
+
+main > article section h1 {
+    font-size: 1.25em;
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+    font-weight: 600;
+    position: sticky;
+    top: 4.5rem;
+    background: #fff;
+}
+    main > article section h1 img {
+        height: 32px;
+        margin-right: 1rem;
+    }
+
+    article section h1 a,
+    article section h1 a:active,
+    article section h1 a:focus,
+    article section h1 a:hover,
+    main > article > h1 a:hover,
+    .container > header > h1 a,
+    main > article > h1 a,
+    .container > header > h1 a:active,
+    main > article > h1 a:active,
+    .container > header > h1 a:focus,
+    main > article > h1 a:focus,
+    .container > header > h1 a:hover,
+    main > article > h1 a:hover {
+        color: inherit;
+        text-decoration: none;
+    }
+
+
+.changes {
+    padding: 0;
+}
+
+.changes_item {
+    margin: 1em 0;
+    list-style-type: none;
+}
+
+.changes_item-label {
+    width: 10ex;
+    display: inline-block;
+    color: #fff;
+    font-size: 1.1rem;
+    text-align: center;
+    vertical-align: text-bottom;
+    border-radius: 1.1rem;
+    line-height: 1.5;
+}
+.changes_item-Added .changes_item-label {
+    background-color: darkgreen;
+}
+.changes_item-Changed .changes_item-label {
+    background-color: darkorange;
+}
+.changes_item-Removed .changes_item-label {
+    background-color: darkred;
+}
+
+.changes_item-name {
+    color: #000;
+    font-weight: 600;
+}
+
+.changes table {
+    margin: 1rem;
+    color: #555;
+    font-size: 1.25rem;
+}
+.changes table th {
+    border-right: 2px solid #ccc;
+}
+.changes table td,
+.changes table th {
+    padding: 0 1rem;
+}
+.changes table td:nth-child(3) {
+    color: #ccc;
+    padding: 0;
+}
+
+.container > footer {
+    text-align: right;
+    color: darkgray;
+}
+
+/*@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {*/
+    main > article > h1,
+    main > article section h1 {
+        position: static;
+    }
+/*}*/

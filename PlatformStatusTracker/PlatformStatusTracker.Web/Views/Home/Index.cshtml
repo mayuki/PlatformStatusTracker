@@ -1,5 +1,4 @@
 ﻿@using System.Globalization
-@using System.Text
 @using PlatformStatusTracker.Core.Data
 @using PlatformStatusTracker.Core.Model
 @using PlatformStatusTracker.Web.ViewModels.Home
@@ -13,13 +12,13 @@
     <article>
         <h1><a href="@Url.Action("Changes", "Home", new { Date = date.ToString("yyyy-MM-dd") })">@date.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)</a></h1>
         @Html.Partial("Partial/ChangeSets", new ChangeSetsViewModel
-                                            {
-                                                IeChangeSet = Model.IeChangeSetsByDate.ContainsKey(date) ? Model.IeChangeSetsByDate[date] : null,
-                                                ChromeChangeSet = Model.ChromeChangeSetsByDate.ContainsKey(date) ? Model.ChromeChangeSetsByDate[date] : null,
-                                                WebKitWebCoreChangeSet = Model.WebKitWebCoreChangeSetsByDate.ContainsKey(date) ? Model.WebKitWebCoreChangeSetsByDate[date] : null,
-                                                WebKitJavaScriptCoreChangeSet = Model.WebKitJavaScriptCoreChangeSetsByDate.ContainsKey(date) ? Model.WebKitJavaScriptCoreChangeSetsByDate[date] : null,
-                                                MozillaChangeSet = Model.MozillaChangeSetsByDate.ContainsKey(date) ? Model.MozillaChangeSetsByDate[date] : null,
-                                            })
+        {
+            IeChangeSet = Model.IeChangeSetsByDate.ContainsKey(date) ? Model.IeChangeSetsByDate[date] : null,
+            ChromeChangeSet = Model.ChromeChangeSetsByDate.ContainsKey(date) ? Model.ChromeChangeSetsByDate[date] : null,
+            WebKitWebCoreChangeSet = Model.WebKitWebCoreChangeSetsByDate.ContainsKey(date) ? Model.WebKitWebCoreChangeSetsByDate[date] : null,
+            WebKitJavaScriptCoreChangeSet = Model.WebKitJavaScriptCoreChangeSetsByDate.ContainsKey(date) ? Model.WebKitJavaScriptCoreChangeSetsByDate[date] : null,
+            MozillaChangeSet = Model.MozillaChangeSetsByDate.ContainsKey(date) ? Model.MozillaChangeSetsByDate[date] : null,
+        })
     </article>
 }
 

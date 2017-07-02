@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using PlatformStatusTracker.Core.Enum;
+using System.ComponentModel;
 
 namespace PlatformStatusTracker.Core.Data
 {
@@ -128,19 +129,33 @@ namespace PlatformStatusTracker.Core.Data
         public string FfViewsLink { get; set; }
         [JsonProperty("ie_views")]
         public ViewsStatus IeViews { get; set; }
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete]
         [JsonProperty("prefixed")]
         public bool _Prefixed { get; set; }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete]
         [JsonProperty("shipped_android_milestone")]
         public int? ShippedAndroidMilestone { get; set; }
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete]
         [JsonProperty("shipped_ios_milestone")]
         public int? ShippedIosMilestone { get; set; }
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete]
         [JsonProperty("shipped_milestone")]
         public int? ShippedMilestone { get; set; }
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete]
         [JsonProperty("shipped_opera_android_milestone")]
         public int? ShippedOperaAndroidMilestone { get; set; }
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete]
         [JsonProperty("shipped_opera_milestone")]
         public int? ShippedOperaMilestone { get; set; }
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [Obsolete]
         [JsonProperty("shipped_webview_milestone")]
         public int? ShippedWebViewMilestone { get; set; }
 
@@ -169,12 +184,14 @@ namespace PlatformStatusTracker.Core.Data
                 ;
         }
 
+#pragma warning disable CS0612 // Type or member is obsolete
         public bool Flag => Browsers?.Chrome?.Flag ?? false;
         public bool Prefixed => Browsers?.Chrome?.Prefixed ?? _Prefixed;
         public string Status => Browsers?.Chrome?.Status?.Text ?? ImplStatusChrome;
         public int? Android => Browsers?.Chrome?.Android ?? ShippedAndroidMilestone;
         public int? Ios => Browsers?.Chrome?.Ios ?? ShippedIosMilestone;
         public int? Desktop => Browsers?.Chrome?.Desktop ?? ShippedMilestone;
+#pragma warning restore CS0612 // Type or member is obsolete
 
         public class BrowserStatus
         {

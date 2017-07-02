@@ -1,45 +1,113 @@
-﻿@using System.Globalization
-@using System.Text
-@using System.Text.RegularExpressions
-@using PlatformStatusTracker.Core.Data
+﻿@model PlatformStatusTracker.Web.ViewModels.Home.ChangeSetsViewModel
 @using PlatformStatusTracker.Core.Model
-@model PlatformStatusTracker.Web.ViewModels.Home.ChangeSetsViewModel
+@using PlatformStatusTracker.Core.Data
+@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.Razor
+@using System.Text.RegularExpressions
+@using PlatformStatusTracker.Web.ViewModels.Home
+
+@{
+    Func<string, IHtmlContent> ToModernIePageFragment =
+        @<text>@Regex.Replace(item.ToLowerInvariant(), @"\W", "")</text>;
+    Func<WebKitPlatformStatus, IHtmlContent> WebKitUrl =
+        @<text>
+            @if (String.IsNullOrWhiteSpace(item.WebKitUrl))
+            {
+                <span class="changes_item-name">@item.Name</span>
+            }
+            else
+            {
+                <a class="changes_item-name" href="@item.WebKitUrl">@item.Name</a>
+            }
+        </text>;
+    Func<MozillaPlatformStatus, IHtmlContent> MozillaUrl =
+        @<text>
+            @if (String.IsNullOrWhiteSpace(item.Slug))
+            {
+                <span class="changes_item-name">@item.Name</span>
+            }
+            else
+            {
+                <a class="changes_item-name" href="https://platform-status.mozilla.org/#@item.Slug">@item.Name</a>
+            }
+        </text>;
+    Func<IePlatformStatus, IHtmlContent> EdgeUrl =
+        @<text>
+        @if (String.IsNullOrWhiteSpace(item.Name))
+        {
+            <span class="changes_item-name">@item.Name</span>
+        }
+        else
+        {
+            <a class="changes_item-name" href="https://dev.modern.ie/platform/status/@ToModernIePageFragment(item.Name)/">@item.Name</a>
+        }
+        </text>;
+    Func<ChromiumPlatformStatus, IHtmlContent> ChromiumUrl =
+        @<text>
+        @if (String.IsNullOrWhiteSpace(item.BugUrl))
+        {
+            <span class="changes_item-name">@item.Name</span>
+        }
+        else
+        {
+            <a class="changes_item-name" href="@item.BugUrl">@item.Name</a>
+        }
+        </text>;
+}
+@functions
+{
+    string Value(int? value) => value.HasValue ? value.ToString() : "(n/a)";
+    string Value(string value) => !String.IsNullOrWhiteSpace(value) ? value : "(n/a)";
+    string Value(bool? value) => value.HasValue ? value.ToString() : "(n/a)";
+}
 
 @if (Model.IeChangeSet != null && Model.IeChangeSet.Changes.Any())
 {
     <section>
-        <h1><a href="https://dev.modern.ie/platform/status/">Edge</a></h1>
-        <ul>
+        <h1><a href="https://dev.modern.ie/platform/status/"><img src="~/images/shared/Icon-Edge.png" alt="" />Edge</a></h1>
+        <ul class="changes">
             @foreach (var change in Model.IeChangeSet.Changes.Cast<IeChangeInfo>())
             {
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span>: <a href="https://dev.modern.ie/platform/status/@ToModernIePageFragment(change.NewStatus.Name)/">@change.NewStatus.Name</a>
-                        <div>Status: @(change.NewStatus.IeStatus.Text)</div>
-                        @if (change.NewStatus.IeStatus.Flag.HasValue)
-                        {
-                            <div>Enabling in about:flags: @(change.NewStatus.IeStatus.Flag)</div>
-                        }
+                        <span class="changes_item-label">Added</span> @EdgeUrl(change.NewStatus)
+                        <table>
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Status", null, change.NewStatus.IeStatus.Text))
+                            @if (change.NewStatus.IeStatus.Flag.HasValue)
+                            {
+                                @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Enabling in about:flags", change.NewStatus.IeStatus.Flag))
+                            }
+                        </table>
                     </li>
                 }
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span>: @change.OldStatus.Name
+                        <span class="changes_item-label">Removed</span> @EdgeUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span>: <a href="https://dev.modern.ie/platform/status/@ToModernIePageFragment(change.NewStatus.Name)/">@change.NewStatus.Name</a> @ToIeStatusChangedInfo(change.OldStatus.IeStatus, change.NewStatus.IeStatus)
+                        <span class="changes_item-label">Changed</span> @EdgeUrl(change.NewStatus)
+                        @{ 
+                            var (oldStatus, newStatus) = (change.OldStatus.IeStatus, change.NewStatus.IeStatus);
+                        }
+                        <table>
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Status", newStatus.Text, oldStatus.Text))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Priority", newStatus.Priority, oldStatus.Priority))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Prefixed", newStatus.IePrefixed, oldStatus.IePrefixed))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("UnPrefixed", newStatus.IeUnprefixed, oldStatus.IeUnprefixed))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Enabling in about:flags", newStatus.Flag, oldStatus.Flag))
+                        </table>
                     </li>
                 }
                 @*
-                <li>
-                    NewStatus: @(change.NewStatus != null ? change.NewStatus.Id.ToString() : ""),
-                    OldStatus: @(change.OldStatus != null ? change.OldStatus.Id.ToString() : "")
-                </li>
+                    <li>
+                        NewStatus: @(change.NewStatus != null ? change.NewStatus.Id.ToString() : ""),
+                        OldStatus: @(change.OldStatus != null ? change.OldStatus.Id.ToString() : "")
+                    </li>
                 *@
             }
         </ul>
@@ -48,28 +116,44 @@
 @if (Model.ChromeChangeSet != null && Model.ChromeChangeSet.Changes.Any())
 {
     <section>
-        <h1><a href="http://www.chromestatus.com/features">Chromium</a></h1>
-        <ul>
+        <h1><a href="http://www.chromestatus.com/features"><img src="~/images/shared/Icon-Chromium.png" alt="" />Chromium</a></h1>
+        <ul class="changes">
             @foreach (var change in Model.ChromeChangeSet.Changes.Cast<ChromiumChangeInfo>())
             {
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span>: <a href="@change.NewStatus.BugUrl">@change.NewStatus.Name</a>
-                        <div>Status: @(change.NewStatus.ImplStatusChrome)</div>
+                        <span class="changes_item-label">Added</span> @ChromiumUrl(change.NewStatus)
+                        <table>
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Status", change.NewStatus.Status))
+                        </table>
                     </li>
                 }
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span>: <a href="@change.OldStatus.BugUrl">@change.OldStatus.Name</a>
+                        <span class="changes_item-label">Removed</span> @ChromiumUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span>: <a href="@change.NewStatus.BugUrl">@change.NewStatus.Name</a>
-                        @ToChromiumStatusChangedInfo(change.OldStatus, change.NewStatus)
+                        <span class="changes_item-label">Changed</span> @ChromiumUrl(change.NewStatus)
+                        @{ 
+                            var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
+                        }
+                        <table>
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Status", newStatus.Status, oldStatus.Status))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Flag", newStatus.Flag, oldStatus.Flag))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Prefixed", newStatus.Prefixed, oldStatus.Prefixed))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Android", newStatus.Android, oldStatus.Android))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Desktop", newStatus.Desktop, oldStatus.Desktop))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Ios", newStatus.Ios, oldStatus.Ios))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("ShippedMilestone", newStatus.ShippedMilestone, oldStatus.ShippedMilestone))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("ShippedOperaAndroidMilestone", newStatus.ShippedOperaAndroidMilestone, oldStatus.ShippedOperaAndroidMilestone))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("ShippedOperaMilestone", newStatus.ShippedOperaMilestone, oldStatus.ShippedOperaMilestone))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("ShippedWebViewMilestone", newStatus.ShippedWebViewMilestone, oldStatus.ShippedWebViewMilestone))
+                        </table>
                     </li>
                 }
                 @*
@@ -85,29 +169,37 @@
 @if (Model.WebKitWebCoreChangeSet != null && Model.WebKitWebCoreChangeSet.Changes.Any())
 {
     <section>
-        <h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/features.json">WebKit (WebCore)</a></h1>
-        <ul>
+        <h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/features.json"><img src="~/images/shared/Icon-WebKit.png" alt="" />WebKit (WebCore)</a></h1>
+        <ul class="changes">
             @foreach (var change in Model.WebKitWebCoreChangeSet.Changes.Cast<WebKitChangeInfo>())
             {
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span>: @WebKitUrl(change.NewStatus)
-                        <div>Status: @(change.NewStatus.Status.Status)</div>
-                        <div>EnabledByDefault: @(change.NewStatus.Status.EnabledByDefault)</div>
-                    </li>
+                        <span class="changes_item-label">Added</span> @WebKitUrl(change.NewStatus)
+                        <table>
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Status", change.NewStatus.Status.Status))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("EnabledByDefault", change.NewStatus.Status.EnabledByDefault))
+                        </table>
+s                    </li>
                 }
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span>: @WebKitUrl(change.OldStatus)
+                        <span class="changes_item-label">Removed</span> @WebKitUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span>: @WebKitUrl(change.NewStatus)
-                        @ToWebKitStatusChangedInfo(change.OldStatus, change.NewStatus)
+                        <span class="changes_item-label">Changed</span> @WebKitUrl(change.NewStatus)
+                        @{
+                            var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
+                        }
+                        <table>
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Status", newStatus.Status.Status, oldStatus.Status.Status))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("EnabledByDefault", newStatus.Status.EnabledByDefault, oldStatus.Status.EnabledByDefault))
+                        </table>
                     </li>
                 }
                 @*
@@ -123,29 +215,37 @@
 @if (Model.WebKitJavaScriptCoreChangeSet != null && Model.WebKitJavaScriptCoreChangeSet.Changes.Any())
 {
     <section>
-        <h1><a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/features.json">WebKit (JavaScriptCore)</a></h1>
-        <ul>
+        <h1><a href="http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/features.json"><img src="~/images/shared/Icon-WebKit.png" alt="" />WebKit (JavaScriptCore)</a></h1>
+        <ul class="changes">
             @foreach (var change in Model.WebKitJavaScriptCoreChangeSet.Changes.Cast<WebKitChangeInfo>())
             {
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span>: @WebKitUrl(change.NewStatus)
-                        <div>Status: @(change.NewStatus.Status.Status)</div>
-                        <div>EnabledByDefault: @(change.NewStatus.Status.EnabledByDefault)</div>
+                        <span class="changes_item-label">Added</span> @WebKitUrl(change.NewStatus)
+                        <table>
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Status", change.NewStatus.Status.Status))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("EnabledByDefault", change.NewStatus.Status.EnabledByDefault))
+                        </table>
                     </li>
                 }
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span>: @WebKitUrl(change.OldStatus)
+                        <span class="changes_item-label">Removed</span> @WebKitUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span>: @WebKitUrl(change.NewStatus)
-                        @ToWebKitStatusChangedInfo(change.OldStatus, change.NewStatus)
+                        <span class="changes_item-label">Changed</span> @WebKitUrl(change.NewStatus)
+                        @{
+                            var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
+                        }
+                        <table>
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Status", newStatus.Status.Status, oldStatus.Status.Status))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("EnabledByDefault", newStatus.Status.EnabledByDefault, oldStatus.Status.EnabledByDefault))
+                        </table>
                     </li>
                 }
                 @*
@@ -161,30 +261,39 @@
 @if (Model.MozillaChangeSet != null && Model.MozillaChangeSet.Changes.Any())
 {
     <section>
-        <h1><a href="https://platform-status.mozilla.org/">Firefox</a></h1>
-        <ul>
+        <h1><a href="https://platform-status.mozilla.org/"><img src="~/images/shared/Icon-Firefox.png" alt="" />Firefox</a></h1>
+        <ul class="changes">
             @foreach (var change in Model.MozillaChangeSet.Changes.Cast<MozillaChangeInfo>())
             {
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span>: @MozillaUrl(change.NewStatus)
-                        <div>Status: @Value(change.NewStatus.Status)</div>
-                        <div>Channel: @Value(change.NewStatus.Channel)</div>
-                        <div>Version: @Value(change.NewStatus.Version)</div>
+                        <span class="changes_item-label">Added</span> @MozillaUrl(change.NewStatus)
+                        <table>
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Status", change.NewStatus.Status))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Channel", change.NewStatus.Channel))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Version", change.NewStatus.Version))
+                        </table>
                     </li>
                 }
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span>: @MozillaUrl(change.OldStatus)
+                        <span class="changes_item-label">Removed</span> @MozillaUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span>: @MozillaUrl(change.NewStatus)
-                        @ToMozillaStatusChangedInfo(change.OldStatus, change.NewStatus)
+                        <span class="changes_item-label">Changed</span> @MozillaUrl(change.NewStatus)
+                        @{
+                            var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
+                        }
+                        <table>
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Status", newStatus.Status, oldStatus.Status))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Channel", newStatus.Channel, oldStatus.Channel))
+                            @Html.Partial("Partial/ChangesTableRow", new ChangesTableRowViewModel("Version", newStatus.Version, oldStatus.Version))
+                        </table>
                     </li>
                 }
                 @*
@@ -196,132 +305,4 @@
             }
         </ul>
     </section>
-}
-@* ===== Helper Methods =========================================================================== *@
-@functions
-{
-    public static String ToModernIePageFragment(String name)
-    {
-        return Regex.Replace(name.ToLowerInvariant(), @"\W", "");
-    }
-
-}
-@helper WebKitUrl(WebKitPlatformStatus status)
-{
-    if (String.IsNullOrWhiteSpace(status.WebKitUrl))
-    {
-        <span>@status.Name</span>
-    }
-    else
-    {
-        <a href="@status.WebKitUrl">@status.Name</a>
-    }
-}
-@helper MozillaUrl(MozillaPlatformStatus status)
-{
-    if (String.IsNullOrWhiteSpace(status.Slug))
-    {
-        <span>@status.Name</span>
-    }
-    else
-    {
-        <a href="https://platform-status.mozilla.org/#@status.Slug">@status.Name</a>
-    }
-}
-
-@helper ToIeStatusChangedInfo(IeStatus oldStatus, IeStatus newStatus)
-{
-    if (oldStatus.Text != newStatus.Text)
-    {
-        <div>Status: @oldStatus.Text -&gt; @newStatus.Text</div>
-    }
-    if (oldStatus.Priority != newStatus.Priority)
-    {
-        <div>Priority: @Value(oldStatus.Priority) -&gt; @Value(newStatus.Priority)</div>
-    }
-    if (oldStatus.IePrefixed != newStatus.IePrefixed)
-    {
-        <div>Prefixed: @Value(oldStatus.IePrefixed) -&gt; @Value(newStatus.IePrefixed)</div>
-    }
-    if (oldStatus.IeUnprefixed != newStatus.IeUnprefixed)
-    {
-        <div>UnPrefixed: @Value(oldStatus.IeUnprefixed) -&gt; @Value(newStatus.IeUnprefixed)</div>
-    }
-    if (oldStatus.Flag != newStatus.Flag)
-    {
-        <div>Enabling in about:flags: @Value(oldStatus.Flag) -&gt; @Value(newStatus.Flag)</div>
-    }
-}
-@helper ToChromiumStatusChangedInfo(ChromiumPlatformStatus oldStatus, ChromiumPlatformStatus newStatus)
-{
-    if (oldStatus.ImplStatusChrome != newStatus.ImplStatusChrome)
-    {
-        <div>Status: @oldStatus.ImplStatusChrome -&gt; @newStatus.ImplStatusChrome</div>
-    }
-    if (oldStatus.Prefixed != newStatus.Prefixed)
-    {
-        <div>Prefixed: @oldStatus.Prefixed -&gt; @newStatus.Prefixed</div>
-    }
-    if (oldStatus.ShippedAndroidMilestone != newStatus.ShippedAndroidMilestone)
-    {
-        <div>ShippedAndroidMilestone: @Value(oldStatus.ShippedAndroidMilestone) -&gt; @Value(newStatus.ShippedAndroidMilestone)</div>
-    }
-    if (oldStatus.ShippedIosMilestone != newStatus.ShippedIosMilestone)
-    {
-        <div>ShippedIosMilestone: @Value(oldStatus.ShippedIosMilestone) -&gt; @Value(newStatus.ShippedIosMilestone)</div>
-    }
-    if (oldStatus.ShippedMilestone != newStatus.ShippedMilestone)
-    {
-        <div>ShippedMilestone: @Value(oldStatus.ShippedMilestone) -&gt; @Value(newStatus.ShippedMilestone)</div>
-    }
-    if (oldStatus.ShippedOperaAndroidMilestone != newStatus.ShippedOperaAndroidMilestone)
-    {
-        <div>ShippedOperaAndroidMilestone: @Value(oldStatus.ShippedOperaAndroidMilestone) -&gt; @Value(newStatus.ShippedOperaAndroidMilestone)</div>
-    }
-    if (oldStatus.ShippedOperaMilestone != newStatus.ShippedOperaMilestone)
-    {
-        <div>ShippedOperaMilestone: @Value(oldStatus.ShippedOperaMilestone) -&gt; @Value(newStatus.ShippedOperaMilestone)</div>
-    }
-    if (oldStatus.ShippedWebViewMilestone != newStatus.ShippedWebViewMilestone)
-    {
-        <div>ShippedWebViewMilestone: @Value(oldStatus.ShippedWebViewMilestone) -&gt; @Value(newStatus.ShippedWebViewMilestone)</div>
-    }
-}
-@helper ToWebKitStatusChangedInfo(WebKitPlatformStatus oldStatus, WebKitPlatformStatus newStatus)
-{
-    if (oldStatus.Status.EnabledByDefault != newStatus.Status.EnabledByDefault)
-    {
-        <div>EnabledByDefault: @oldStatus.Status.EnabledByDefault -&gt; @newStatus.Status.EnabledByDefault</div>
-    }
-    if (oldStatus.Status.Status != newStatus.Status.Status)
-    {
-        <div>Status: @Value(oldStatus.Status.Status) -&gt; @Value(newStatus.Status.Status)</div>
-    }
-}
-@helper ToMozillaStatusChangedInfo(MozillaPlatformStatus oldStatus, MozillaPlatformStatus newStatus)
-{
-    if (oldStatus.Status != newStatus.Status)
-    {
-        <div>Status: @Value(oldStatus.Status) -&gt; @Value(newStatus.Status)</div>
-    }
-    if (oldStatus.Channel != newStatus.Channel)
-    {
-        <div>Channel: @Value(oldStatus.Channel) -&gt; @Value(newStatus.Channel)</div>
-    }
-    if (oldStatus.Version != newStatus.Version)
-    {
-        <div>Version: @Value(oldStatus.Version) -&gt; @Value(newStatus.Version)</div>
-    }
-}
-@helper Value(Int32? value)
-{
-    @(value.HasValue ? value.ToString() : "(n/a)")
-}
-@helper Value(String value)
-{
-    @(!String.IsNullOrWhiteSpace(value) ? value : "(n/a)")
-}
-@helper Value(bool? value)
-{
-    @(value.HasValue ? value.ToString() : "(n/a)")
 }
