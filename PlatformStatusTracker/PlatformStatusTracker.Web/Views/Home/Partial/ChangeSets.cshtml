@@ -71,7 +71,7 @@
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span> @EdgeUrl(change.NewStatus)
+                        <span class="changes_item-label">Added</span><span class="changes_item-label-sep">:</span> @EdgeUrl(change.NewStatus)
                         <table>
                             @Html.Partial("Partial/ChangesTableRow", new []
                             {
@@ -84,13 +84,13 @@
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span> @EdgeUrl(change.OldStatus)
+                        <span class="changes_item-label">Removed</span><span class="changes_item-label-sep">:</span> @EdgeUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span> @EdgeUrl(change.NewStatus)
+                        <span class="changes_item-label">Changed</span><span class="changes_item-label-sep">:</span> @EdgeUrl(change.NewStatus)
                         @{ 
                             var (oldStatus, newStatus) = (change.OldStatus.IeStatus, change.NewStatus.IeStatus);
                         }
@@ -126,7 +126,7 @@
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span> @ChromiumUrl(change.NewStatus)
+                        <span class="changes_item-label">Added</span><span class="changes_item-label-sep">:</span> @ChromiumUrl(change.NewStatus)
                         <table>
                             @Html.Partial("Partial/ChangesTableRow", new[] { new ChangesTableRowViewModel("Status", change.NewStatus.Status) })
                         </table>
@@ -135,13 +135,13 @@
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span> @ChromiumUrl(change.OldStatus)
+                        <span class="changes_item-label">Removed</span><span class="changes_item-label-sep">:</span> @ChromiumUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span> @ChromiumUrl(change.NewStatus)
+                        <span class="changes_item-label">Changed</span><span class="changes_item-label-sep">:</span> @ChromiumUrl(change.NewStatus)
                         @{ 
                             var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
                         }
@@ -182,7 +182,7 @@
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span> @WebKitUrl(change.NewStatus)
+                        <span class="changes_item-label">Added</span><span class="changes_item-label-sep">:</span> @WebKitUrl(change.NewStatus)
                         <table>
                             @Html.Partial("Partial/ChangesTableRow", new[]
                             {
@@ -195,13 +195,13 @@
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span> @WebKitUrl(change.OldStatus)
+                        <span class="changes_item-label">Removed</span><span class="changes_item-label-sep">:</span> @WebKitUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span> @WebKitUrl(change.NewStatus)
+                        <span class="changes_item-label">Changed</span><span class="changes_item-label-sep">:</span> @WebKitUrl(change.NewStatus)
                         @{
                             var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
                         }
@@ -234,7 +234,7 @@
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span> @WebKitUrl(change.NewStatus)
+                        <span class="changes_item-label">Added</span><span class="changes_item-label-sep">:</span> @WebKitUrl(change.NewStatus)
                         <table>
                             @Html.Partial("Partial/ChangesTableRow", new[]
                             {
@@ -247,13 +247,13 @@
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span> @WebKitUrl(change.OldStatus)
+                        <span class="changes_item-label">Removed</span><span class="changes_item-label-sep">:</span> @WebKitUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span> @WebKitUrl(change.NewStatus)
+                        <span class="changes_item-label">Changed</span><span class="changes_item-label-sep">:</span> @WebKitUrl(change.NewStatus)
                         @{
                             var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
                         }
@@ -286,7 +286,7 @@
                 if (change.IsAdded)
                 {
                     <li class="changes_item changes_item-Added">
-                        <span class="changes_item-label">Added</span> @MozillaUrl(change.NewStatus)
+                        <span class="changes_item-label">Added</span><span class="changes_item-label-sep">:</span> @MozillaUrl(change.NewStatus)
                         <table>
                             @Html.Partial("Partial/ChangesTableRow", new[]
                             {
@@ -300,13 +300,13 @@
                 if (change.IsRemoved)
                 {
                     <li class="changes_item changes_item-Removed">
-                        <span class="changes_item-label">Removed</span> @MozillaUrl(change.OldStatus)
+                        <span class="changes_item-label">Removed</span><span class="changes_item-label-sep">:</span> @MozillaUrl(change.OldStatus)
                     </li>
                 }
                 if (change.IsChanged)
                 {
                     <li class="changes_item changes_item-Changed">
-                        <span class="changes_item-label">Changed</span> @MozillaUrl(change.NewStatus)
+                        <span class="changes_item-label">Changed</span><span class="changes_item-label-sep">:</span> @MozillaUrl(change.NewStatus)
                         @{
                             var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
                         }

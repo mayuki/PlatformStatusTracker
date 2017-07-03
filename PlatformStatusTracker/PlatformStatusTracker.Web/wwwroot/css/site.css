@@ -97,6 +97,9 @@ main > article section h1 {
 .changes_item-Removed .changes_item-label {
     background-color: darkred;
 }
+.changes_item-label-sep {
+    display: none;
+}
 
 .changes_item-name {
     color: #000;
