@@ -75,7 +75,7 @@
                         <table>
                             @Html.Partial("Partial/ChangesTableRow", new []
                             {
-                                new ChangesTableRowViewModel("Status", null, change.NewStatus.IeStatus.Text),
+                                new ChangesTableRowViewModel("Status", change.NewStatus.IeStatus.Text),
                                 new ChangesTableRowViewModel("Enabling in about:flags", change.NewStatus.IeStatus.Flag)
                             })
                         </table>
