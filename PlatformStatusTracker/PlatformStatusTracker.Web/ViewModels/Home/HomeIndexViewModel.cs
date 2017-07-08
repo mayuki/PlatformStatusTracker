@@ -1,11 +1,10 @@
-﻿using System;
+﻿using PlatformStatusTracker.Core.Enum;
+using PlatformStatusTracker.Core.Model;
+using PlatformStatusTracker.Core.Repository;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
-using PlatformStatusTracker.Core.Enum;
-using PlatformStatusTracker.Core.Model;
-using PlatformStatusTracker.Core.Repository;
 
 namespace PlatformStatusTracker.Web.ViewModels.Home
 {
@@ -46,20 +45,20 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
 #endif
 
             return new HomeIndexViewModel()
-                   {
-                       IeChangeSetsByDate = edgeChangeSets.ToDictionary(k => k.Date, v => v),
-                       ChromeChangeSetsByDate = chromeChangeSets.ToDictionary(k => k.Date, v => v),
-                       WebKitWebCoreChangeSetsByDate = webkitWebCoreChangeSets.ToDictionary(k => k.Date, v => v),
-                       WebKitJavaScriptCoreChangeSetsByDate = webkitJavaScriptCoreChangeSets.ToDictionary(k => k.Date, v => v),
-                       MozillaChangeSetsByDate = mozillaChangeSets.ToDictionary(k => k.Date, v => v),
-                       Dates = new [] { edgeChangeSets, chromeChangeSets, webkitWebCoreChangeSets, webkitJavaScriptCoreChangeSets, mozillaChangeSets }
+            {
+                IeChangeSetsByDate = edgeChangeSets.ToDictionary(k => k.Date, v => v),
+                ChromeChangeSetsByDate = chromeChangeSets.ToDictionary(k => k.Date, v => v),
+                WebKitWebCoreChangeSetsByDate = webkitWebCoreChangeSets.ToDictionary(k => k.Date, v => v),
+                WebKitJavaScriptCoreChangeSetsByDate = webkitJavaScriptCoreChangeSets.ToDictionary(k => k.Date, v => v),
+                MozillaChangeSetsByDate = mozillaChangeSets.ToDictionary(k => k.Date, v => v),
+                Dates = new[] { edgeChangeSets, chromeChangeSets, webkitWebCoreChangeSets, webkitJavaScriptCoreChangeSets, mozillaChangeSets }
                             .SelectMany(x => x)
                             .Where(x => x.Changes.Any())
                             .Select(x => x.Date)
                             .Distinct()
                             .ToArray(),
-                       LastUpdatedAt = lastUpdated,
-                   };
+                LastUpdatedAt = lastUpdated,
+            };
         }
 
         private static async Task<ChangeSet[]> GetChangeSetsByBrowserAsync(IChangeSetRepository changeSetRepository, StatusDataType type)

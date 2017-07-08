@@ -1,7 +1,9 @@
 ﻿using LZ4;
+using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
+using PlatformStatusTracker.Core.Configuration;
 using PlatformStatusTracker.Core.Enum;
 using PlatformStatusTracker.Core.Model;
 using System;
@@ -22,6 +24,11 @@ namespace PlatformStatusTracker.Core.Repository
     public class ChangeSetAzureStorageRepository : IChangeSetRepository
     {
         private readonly string _connectionString;
+
+        public ChangeSetAzureStorageRepository(IOptions<ConnectionStringOptions> connectionStringOptions)
+            : this(connectionStringOptions.Value.AzureStoreageConnectionString)
+        {
+        }
 
         public ChangeSetAzureStorageRepository(string connectionString)
         {

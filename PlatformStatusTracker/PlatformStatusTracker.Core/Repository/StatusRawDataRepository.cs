@@ -1,5 +1,7 @@
-﻿using Microsoft.WindowsAzure.Storage;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using PlatformStatusTracker.Core.Configuration;
 using PlatformStatusTracker.Core.Enum;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,11 @@ namespace PlatformStatusTracker.Core.Repository
     public class StatusRawDataAzureStorageRepository : IStatusRawDataRepository
     {
         private readonly string _connectionString;
+        public StatusRawDataAzureStorageRepository(IOptions<ConnectionStringOptions> connectionStringOptions)
+            : this(connectionStringOptions.Value.AzureStoreageConnectionString)
+        {
+        }
+
         public StatusRawDataAzureStorageRepository(string connectionString)
         {
             _connectionString = connectionString;

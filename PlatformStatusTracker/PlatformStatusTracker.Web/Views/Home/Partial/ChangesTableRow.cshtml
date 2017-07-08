@@ -1,0 +1,40 @@
+﻿@model IEnumerable<PlatformStatusTracker.Web.ViewModels.Home.ChangesTableRowViewModel>
+@functions
+{
+    string Value(object value)
+    {
+        switch (value)
+        {
+            case int v:
+                return v.ToString();
+            case bool v:
+                return v.ToString();
+            default:
+                return value == null ? "(n/a)" : value.ToString();
+        }
+    }
+}
+@foreach (var item in Model)
+{
+    if (item.IsNewOnly && item.New != null)
+    {
+        <tr>
+            <th>@item.Title</th>
+            <td>@Value(item.New)</td>
+        </tr>
+    }
+    else
+    {
+        var oldText = Value(item.Old);
+        var newText = Value(item.New);
+        if (oldText != newText)
+        {
+        <tr>
+            <th>@item.Title</th>
+            <td>@oldText</td>
+            <td>→</td>
+            <td>@newText</td>
+        </tr>
+        }
+    }
+}

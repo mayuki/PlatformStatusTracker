@@ -1,41 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using Microsoft.Practices.ServiceLocation;
-using PlatformStatusTracker.Core.Model;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using PlatformStatusTracker.Core.Configuration;
 using PlatformStatusTracker.Core.Repository;
-using PlatformStatusTracker.Web.Infrastracture;
+using PlatformStatusTracker.Core.Model;
+using PlatformStatusTracker.Core.Enum;
 using PlatformStatusTracker.Web.ViewModels.Home;
 
 namespace PlatformStatusTracker.Web.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController : Controller
     {
-        [OutputCache(CacheProfile = "Home_IndexAndFeed")]
-        public async Task<ActionResult> Index()
-        {
-            var viewModel = await HomeIndexViewModel.CreateAsync(ServiceLocator.GetInstance<IChangeSetRepository>());
+        private IChangeSetRepository _changeSetRepository;
+        private IStatusRawDataRepository _statusRawDataRepository;
+        private ConnectionStringOptions _connectionString;
 
-            return View(viewModel);
+        public HomeController(IChangeSetRepository changeSetRepository, IStatusRawDataRepository statusRawDataRepository, IOptions<ConnectionStringOptions> connectionString)
+        {
+            _changeSetRepository = changeSetRepository;
+            _statusRawDataRepository = statusRawDataRepository;
+            _connectionString = connectionString.Value;
         }
 
-        [OverrideContentType("application/atom+xml")]
-        [Route("Feed")]
-        [OutputCache(CacheProfile = "Home_IndexAndFeed")]
-        public async Task<ActionResult> Feed()
+        public async Task<IActionResult> Index()
         {
-            var viewModel = await HomeIndexViewModel.CreateAsync(ServiceLocator.GetInstance<IChangeSetRepository>());
-
-            return View(viewModel);
+            return View(await HomeIndexViewModel.CreateAsync(_changeSetRepository));
         }
 
-        [Route(@"Changes/{date:regex(^\d{4}-\d{1,2}-\d{1,2})}")]
-        [OutputCache(CacheProfile = "Home_Changes")]
-        public async Task<ActionResult> Changes(String date)
+        public async Task<IActionResult> Feed()
+        {
+            var result = View(await HomeIndexViewModel.CreateAsync(_changeSetRepository));
+            result.ContentType = "application/atom+xml";
+            return result;
+        }
+
+        public async Task<IActionResult> Changes(String date)
         {
             if (String.IsNullOrWhiteSpace(date))
             {
@@ -48,21 +50,25 @@ namespace PlatformStatusTracker.Web.Controllers
                 return RedirectToAction("Index");
             }
 
-            var viewModel = await ChangesViewModel.CreateAsync(ServiceLocator.GetInstance<IChangeSetRepository>(), dateTime);
+            var viewModel = await ChangesViewModel.CreateAsync(_changeSetRepository, dateTime);
             return View(viewModel);
         }
 
-        public async Task<ActionResult> UpdateStatus(String key)
+        public async Task<IActionResult> UpdateStatus(String key)
         {
-            var appKey = ConfigurationManager.AppSettings["PlatformStatusTracker:UpdateKey"];
-            if (String.IsNullOrWhiteSpace(appKey) || key != appKey)
+            if (String.IsNullOrWhiteSpace(_connectionString.UpdateKey) || key != _connectionString.UpdateKey)
             {
-                return new HttpStatusCodeResult(403);
+                return StatusCode(403);
             }
 
-            await Using<DataUpdateAgent>().UpdateAllAsync();
+            await new DataUpdateAgent(_changeSetRepository, _statusRawDataRepository).UpdateAllAsync();
 
             return Content("OK", "text/plain");
+        }
+
+        public IActionResult Error()
+        {
+            return View();
         }
     }
 }
