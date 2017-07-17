@@ -12,11 +12,11 @@ namespace PlatformStatusTracker.Web.Infrastracture.TagHelpers
         private const string VisibilityAttributeName = "p-visibility";
 
         [HtmlAttributeName(VisibilityAttributeName)]
-        public bool Visiblilty { get; set; }
+        public bool Visibility { get; set; }
 
         public override Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
-            if (!Visiblilty)
+            if (!Visibility)
             {
                 output.SuppressOutput();
             }
