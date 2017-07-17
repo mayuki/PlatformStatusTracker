@@ -27,6 +27,7 @@
                 @{
                     var content = Html.Partial("Partial/ChangeSets", new ChangeSetsViewModel
                     {
+                        HideIcon = true,
                         IeChangeSet = Model.IeChangeSetsByDate.ContainsKey(date) ? Model.IeChangeSetsByDate[date] : null,
                         ChromeChangeSet = Model.ChromeChangeSetsByDate.ContainsKey(date) ? Model.ChromeChangeSetsByDate[date] : null,
                         WebKitWebCoreChangeSet = Model.WebKitWebCoreChangeSetsByDate.ContainsKey(date) ? Model.WebKitWebCoreChangeSetsByDate[date] : null,
