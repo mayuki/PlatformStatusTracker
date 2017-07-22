@@ -18,7 +18,7 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
         public DateTime[] Dates { get; private set; }
         public DateTime LastUpdatedAt { get; private set; }
 
-        public static async Task<HomeIndexViewModel> CreateAsync(IChangeSetRepository changeSetRepository)
+        public static async Task<HomeIndexViewModel> CreateAsync(IChangeSetRepository changeSetRepository, bool shouldFilterIncomplete = false)
         {
 #if !FALSE
             var edgeChangeSetsTask = GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.Edge);
@@ -44,6 +44,8 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
             var lastUpdated = await statusDataRepository.GetLastUpdated();
 #endif
 
+            var today = shouldFilterIncomplete ? DateTime.Today : DateTime.Now;
+
             return new HomeIndexViewModel()
             {
                 IeChangeSetsByDate = edgeChangeSets.ToDictionary(k => k.Date, v => v),
@@ -53,7 +55,7 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
                 MozillaChangeSetsByDate = mozillaChangeSets.ToDictionary(k => k.Date, v => v),
                 Dates = new[] { edgeChangeSets, chromeChangeSets, webkitWebCoreChangeSets, webkitJavaScriptCoreChangeSets, mozillaChangeSets }
                             .SelectMany(x => x)
-                            .Where(x => x.Changes.Any())
+                            .Where(x => x.Date < today && x.Changes.Any())
                             .Select(x => x.Date)
                             .Distinct()
                             .ToArray(),
