@@ -25,6 +25,11 @@ namespace PlatformStatusTracker.Core.Model
         /// </summary>
         public DateTime From { get; set; }
 
+        /// <summary>
+        /// ChangeSet's updated date and time.
+        /// </summary>
+        public DateTime UpdatedAt { get; set; }
+
         public static ChangeSet[] GetChangeSetsFromPlatformStatuses(PlatformStatuses[] platformStatuses)
         {
             // FIXME: We must handle unexpected errors.
