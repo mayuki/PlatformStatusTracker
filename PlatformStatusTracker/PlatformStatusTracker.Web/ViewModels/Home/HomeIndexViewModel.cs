@@ -67,5 +67,19 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
                                                            .OrderByDescending(x => x.Date)
                                                            .ToArray();
         }
+
+        public DateTime GetUpdatedAtByDate(DateTime date)
+        {
+            var dateTime = date;
+            foreach (var changeSetsByDate in new [] { IeChangeSetsByDate, ChromeChangeSetsByDate, WebKitJavaScriptCoreChangeSetsByDate, WebKitWebCoreChangeSetsByDate, MozillaChangeSetsByDate })
+            {
+                if (changeSetsByDate.TryGetValue(dateTime, out var t) && t.UpdatedAt > dateTime)
+                {
+                    dateTime = t.UpdatedAt;
+                }
+            }
+
+            return dateTime;
+        }
     }
 }

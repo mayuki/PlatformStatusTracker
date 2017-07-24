@@ -54,9 +54,17 @@ namespace PlatformStatusTracker.Core.Model
             var changeInfo = PlatformStatusTracking.GetChangeInfoSetFromStatuses(prevStatuses, curStatuses);
             var changeInfoJson = JsonConvert.SerializeObject(changeInfo);
 
+            // Load previous changeset from Table and check modification.
+            var prevChangeSet = (await _changeSetRepository.GetChangeSetsRangeAsync(dataType, from, from, 1)).FirstOrDefault();
+            if (prevChangeSet != null && JsonConvert.SerializeObject(prevChangeSet.Changes) == changeInfoJson)
+            {
+                Debug.WriteLine("Not Modified: StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
+                return;
+            }
+
             // Save new changeset to Table.
-            Debug.WriteLine("Insert/Update : StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
-            await _changeSetRepository.InsertAsync(dataType, now, changeInfoJson, from);
+            Debug.WriteLine("Insert/Update: StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
+            await _changeSetRepository.InsertOrReplaceAsync(dataType, now, changeInfoJson, from);
         }
 
         public async Task UpdateAllAsync()

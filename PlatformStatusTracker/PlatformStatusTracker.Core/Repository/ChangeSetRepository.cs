@@ -18,7 +18,7 @@ namespace PlatformStatusTracker.Core.Repository
     {
         Task<ChangeSet> GetLatestChangeSetAsync(StatusDataType type);
         Task<ChangeSet[]> GetChangeSetsRangeAsync(StatusDataType type, DateTime fromDate, DateTime toDate, int take);
-        Task InsertAsync(StatusDataType dataType, DateTime date, string changeSetContent, DateTime from);
+        Task InsertOrReplaceAsync(StatusDataType dataType, DateTime date, string changeSetContent, DateTime from);
     }
 
     public class ChangeSetAzureStorageRepository : IChangeSetRepository
@@ -93,7 +93,7 @@ namespace PlatformStatusTracker.Core.Repository
             return entities.Select(x => x.ToChangeSet()).ToArray();
         }
 
-        public async Task InsertAsync(StatusDataType dataType, DateTime date, string changeSetContent, DateTime from)
+        public async Task InsertOrReplaceAsync(StatusDataType dataType, DateTime date, string changeSetContent, DateTime from)
         {
             var table = await CreateOrGetTableAsync();
             await table.ExecuteAsync(TableOperation.InsertOrReplace(new ChangeSetEntity(dataType, date, changeSetContent, from))).ConfigureAwait(false);
@@ -111,6 +111,7 @@ namespace PlatformStatusTracker.Core.Repository
             public DateTime Date { get; set; }
             public byte[] Content { get; set; }
             public DateTime From { get; set; }
+            public DateTime UpdatedAt { get; set; }
 
             public ChangeSetEntity() { }
             public ChangeSetEntity(StatusDataType dataType, DateTime date, String changeSetContent, DateTime from)
@@ -122,6 +123,7 @@ namespace PlatformStatusTracker.Core.Repository
                 Date = date.Date;
                 Content = LZ4Codec.Wrap(Encoding.UTF8.GetBytes(changeSetContent));
                 From = from;
+                UpdatedAt = DateTime.UtcNow;
             }
 
             public string GetContent()
@@ -147,6 +149,7 @@ namespace PlatformStatusTracker.Core.Repository
                     Date = Date,
                     From = From,
                     Changes = changes,
+                    UpdatedAt = UpdatedAt,
                 };
             }
 

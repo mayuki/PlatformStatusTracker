@@ -22,7 +22,7 @@
             <title>@date.ToString("yyyy-MM-dd", new CultureInfo("en-us"))</title>
             <link href="@Url.Action("Changes", "Home", new { Date = date.ToString("yyyy-MM-dd") }, "http")" />
             <id>@Url.Action("Changes", "Home", new { Date = date.ToString("yyyy-MM-dd") }, "http")</id>
-            <updated>@date.ToString("yyyy-MM-dd'T'HH:mm:ss.fffK", DateTimeFormatInfo.InvariantInfo)</updated>
+            <updated>@Model.GetUpdatedAtByDate(date).ToString("yyyy-MM-dd'T'HH:mm:ss.fffK", DateTimeFormatInfo.InvariantInfo)</updated>
             <content type="html">
                 @{
                     var content = Html.Partial("Partial/ChangeSets", new ChangeSetsViewModel
