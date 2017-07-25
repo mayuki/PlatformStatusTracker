@@ -44,7 +44,7 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
             var lastUpdated = await statusDataRepository.GetLastUpdated();
 #endif
 
-            var today = shouldFilterIncomplete ? DateTime.Today : DateTime.Now;
+            var today = shouldFilterIncomplete ? DateTime.UtcNow.Date : DateTime.UtcNow;
 
             return new HomeIndexViewModel()
             {
