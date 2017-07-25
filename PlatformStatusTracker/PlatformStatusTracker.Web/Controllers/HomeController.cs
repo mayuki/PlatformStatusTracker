@@ -30,7 +30,7 @@ namespace PlatformStatusTracker.Web.Controllers
             return View(await HomeIndexViewModel.CreateAsync(_changeSetRepository));
         }
 
-        public async Task<IActionResult> Feed(bool shouldFilterIncomplete = false)
+        public async Task<IActionResult> Feed(bool shouldFilterIncomplete = true)
         {
             var result = View(await HomeIndexViewModel.CreateAsync(_changeSetRepository));
             result.ContentType = "application/atom+xml";
