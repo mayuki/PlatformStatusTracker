@@ -34,7 +34,12 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
             var webkitWebCoreChangeSets = webkitWebCoreChangeSetsTask.Result;
             var webkitJavaScriptCoreChangeSets = webkitJavaScriptCoreChangeSetsTask.Result;
             var mozillaChangeSets = mozillaChangeSetsTask.Result;
-            var lastUpdated = edgeChangeSets.First().Date;
+
+            var lastUpdated = new[] { edgeChangeSets, chromeChangeSets, webkitWebCoreChangeSets, webkitJavaScriptCoreChangeSets, mozillaChangeSets }
+                .SelectMany(x => x.Select(y => y.UpdatedAt))
+                .DefaultIfEmpty()
+                .Max();
+
 #else
             var ieChangeSets = await GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.InternetExplorer);
             var chromeChangeSets = await GetChangeSetsByBrowserAsync(changeSetRepository, StatusDataType.Chromium);
