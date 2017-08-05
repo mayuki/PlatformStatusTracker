@@ -1,7 +1,7 @@
 # Browser Platform Status Tracker
 [![Build status](https://ci.appveyor.com/api/projects/status/x2dj440jc29x7kvc?svg=true)](https://ci.appveyor.com/project/mayuki/platformstatustracker)
 
-[http://platformstatustracker.azurewebsites.net/](http://platformstatustracker.azurewebsites.net/)
+[https://platformstatus.io/](https://platformstatus.io/)
 
 ## Platform data sources
 
