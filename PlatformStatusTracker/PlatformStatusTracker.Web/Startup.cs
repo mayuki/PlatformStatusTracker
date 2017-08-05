@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 using PlatformStatusTracker.Core.Repository;
 using PlatformStatusTracker.Core.Configuration;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.AspNetCore.Mvc;
+using PlatformStatusTracker.Web.Infrastracture.Middlewares;
 
 namespace PlatformStatusTracker.Web
 {
@@ -26,9 +28,11 @@ namespace PlatformStatusTracker.Web
 #endif
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
+            Environment = env;
         }
 
         public IConfigurationRoot Configuration { get; }
+        private IHostingEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -43,6 +47,13 @@ namespace PlatformStatusTracker.Web
                 .AddRazorOptions(options =>
                 {
                     options.ParseOptions = new CSharpParseOptions(LanguageVersion.Latest);
+                })
+                .AddMvcOptions(options =>
+                {
+                    if (!Environment.IsDevelopment())
+                    {
+                        options.Filters.Add(new RequireHttpsAttribute());
+                    }
                 });
         }
 
@@ -62,8 +73,13 @@ namespace PlatformStatusTracker.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            // Redirect: Hostname ----------
+            app.UseRedirectToCanonicalHost("platformstatustracker.azurewebsites.net", "platformstatus.io");
+
+            // Static File ----------
             app.UseStaticFiles();
 
+            // ASP.NET MVC Core ----------
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
