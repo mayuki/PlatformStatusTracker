@@ -25,6 +25,7 @@ namespace PlatformStatusTracker.Web.Controllers
             _connectionString = connectionString.Value;
         }
 
+        [ResponseCache(CacheProfileName = "DefaultCache")]
         public async Task<IActionResult> Index()
         {
             return View(await HomeIndexViewModel.CreateAsync(_changeSetRepository));
@@ -37,6 +38,7 @@ namespace PlatformStatusTracker.Web.Controllers
             return result;
         }
 
+        [ResponseCache(CacheProfileName = "DefaultCache")]
         public async Task<IActionResult> Changes(String date)
         {
             if (String.IsNullOrWhiteSpace(date))
