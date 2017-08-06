@@ -42,6 +42,8 @@ namespace PlatformStatusTracker.Web
             services.AddTransient<IChangeSetRepository, ChangeSetAzureStorageRepository>();
             services.AddTransient<IStatusRawDataRepository, StatusRawDataAzureStorageRepository>();
 
+            services.AddResponseCaching();
+
             // Add framework services.
             services.AddMvc()
                 .AddRazorOptions(options =>
@@ -54,6 +56,8 @@ namespace PlatformStatusTracker.Web
                     {
                         options.Filters.Add(new RequireHttpsAttribute());
                     }
+
+                    options.CacheProfiles.Add("DefaultCache", new CacheProfile { Duration = 60 * 5 });
                 });
         }
 
@@ -78,6 +82,9 @@ namespace PlatformStatusTracker.Web
 
             // Static File ----------
             app.UseStaticFiles();
+
+            // Response Caching ----------
+            app.UseResponseCaching();
 
             // ASP.NET MVC Core ----------
             app.UseMvc(routes =>
