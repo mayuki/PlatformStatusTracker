@@ -57,6 +57,10 @@ namespace PlatformStatusTracker.Web
                         options.Filters.Add(new RequireHttpsAttribute());
                         options.CacheProfiles.Add("DefaultCache", new CacheProfile { Duration = 60 * 5 });
                     }
+                    else
+                    {
+                        options.CacheProfiles.Add("DefaultCache", new CacheProfile { NoStore = true });
+                    }
                 });
         }
 
