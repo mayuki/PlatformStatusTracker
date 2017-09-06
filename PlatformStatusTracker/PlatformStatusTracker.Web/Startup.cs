@@ -44,12 +44,14 @@ namespace PlatformStatusTracker.Web
 
             services.AddResponseCaching();
 
+            Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration.Active.DisableTelemetry = true;
+            services.AddApplicationInsightsTelemetry(options =>
+            {
+                options.EnableAdaptiveSampling = false;
+            });
+
             // Add framework services.
             services.AddMvc()
-                .AddRazorOptions(options =>
-                {
-                    options.ParseOptions = new CSharpParseOptions(LanguageVersion.Latest);
-                })
                 .AddMvcOptions(options =>
                 {
                     if (!Environment.IsDevelopment())
