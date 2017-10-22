@@ -12,6 +12,7 @@ using PlatformStatusTracker.Core.Configuration;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.AspNetCore.Mvc;
 using PlatformStatusTracker.Web.Infrastracture.Middlewares;
+using PlatformStatusTracker.Web.Infrastracture;
 
 namespace PlatformStatusTracker.Web
 {
@@ -86,7 +87,10 @@ namespace PlatformStatusTracker.Web
             app.UseRedirectToCanonicalHost("platformstatustracker.azurewebsites.net", "platformstatus.io");
 
             // Static File ----------
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = new LetsEncryptWellKnownContentTypeProvider()
+            });
 
             // Response Caching ----------
             app.UseResponseCaching();
