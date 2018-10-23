@@ -75,7 +75,7 @@
                     <li class="changes_item changes_item-Added">
                         <span class="changes_item-label">Added</span><span class="changes_item-label-sep">:</span> @EdgeUrl(change.NewStatus)
                         <table>
-                            @Html.Partial("Partial/ChangesTableRow", new []
+                            @await Html.PartialAsync("Partial/ChangesTableRow", new []
                             {
                                 new ChangesTableRowViewModel("Status", change.NewStatus.IeStatus.Text),
                                 new ChangesTableRowViewModel("Enabling in about:flags", change.NewStatus.IeStatus.Flag)
@@ -97,7 +97,7 @@
                             var (oldStatus, newStatus) = (change.OldStatus.IeStatus, change.NewStatus.IeStatus);
                         }
                         <table>
-                            @Html.Partial("Partial/ChangesTableRow", new[]
+                            @await Html.PartialAsync("Partial/ChangesTableRow", new[]
                             {
                                 new ChangesTableRowViewModel("Status", newStatus.Text, oldStatus.Text),
                                 new ChangesTableRowViewModel("Priority", newStatus.Priority, oldStatus.Priority),
@@ -130,7 +130,7 @@
                     <li class="changes_item changes_item-Added">
                         <span class="changes_item-label">Added</span><span class="changes_item-label-sep">:</span> @ChromiumUrl(change.NewStatus)
                         <table>
-                            @Html.Partial("Partial/ChangesTableRow", new[] { new ChangesTableRowViewModel("Status", change.NewStatus.Status) })
+                            @await Html.PartialAsync("Partial/ChangesTableRow", new[] { new ChangesTableRowViewModel("Status", change.NewStatus.Status) })
                         </table>
                     </li>
                 }
@@ -148,7 +148,7 @@
                             var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
                         }
                         <table>
-                            @Html.Partial("Partial/ChangesTableRow", new[]
+                            @await Html.PartialAsync("Partial/ChangesTableRow", new[]
                             {
                                 new ChangesTableRowViewModel("Status", newStatus.Status, oldStatus.Status),
                                 new ChangesTableRowViewModel("Flag", newStatus.Flag, oldStatus.Flag),
@@ -156,10 +156,12 @@
                                 new ChangesTableRowViewModel("Android", newStatus.Android, oldStatus.Android),
                                 new ChangesTableRowViewModel("Desktop", newStatus.Desktop, oldStatus.Desktop),
                                 new ChangesTableRowViewModel("Ios", newStatus.Ios, oldStatus.Ios),
+#pragma warning disable CS0612
                                 new ChangesTableRowViewModel("ShippedMilestone", newStatus.ShippedMilestone, oldStatus.ShippedMilestone),
                                 new ChangesTableRowViewModel("ShippedOperaAndroidMilestone", newStatus.ShippedOperaAndroidMilestone, oldStatus.ShippedOperaAndroidMilestone),
                                 new ChangesTableRowViewModel("ShippedOperaMilestone", newStatus.ShippedOperaMilestone, oldStatus.ShippedOperaMilestone),
                                 new ChangesTableRowViewModel("ShippedWebViewMilestone", newStatus.ShippedWebViewMilestone, oldStatus.ShippedWebViewMilestone),
+#pragma warning restore CS0612
                             })
                         </table>
                     </li>
@@ -186,7 +188,7 @@
                     <li class="changes_item changes_item-Added">
                         <span class="changes_item-label">Added</span><span class="changes_item-label-sep">:</span> @WebKitUrl(change.NewStatus)
                         <table>
-                            @Html.Partial("Partial/ChangesTableRow", new[]
+                            @await Html.PartialAsync("Partial/ChangesTableRow", new[]
                             {
                                 new ChangesTableRowViewModel("Status", change.NewStatus.Status.Status),
                                 new ChangesTableRowViewModel("EnabledByDefault", change.NewStatus.Status.EnabledByDefault),
@@ -208,7 +210,7 @@
                             var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
                         }
                         <table>
-                            @Html.Partial("Partial/ChangesTableRow", new[]
+                            @await Html.PartialAsync("Partial/ChangesTableRow", new[]
                             {
                                 new ChangesTableRowViewModel("Status", newStatus.Status.Status, oldStatus.Status.Status),
                                 new ChangesTableRowViewModel("EnabledByDefault", newStatus.Status.EnabledByDefault, oldStatus.Status.EnabledByDefault),
@@ -238,7 +240,7 @@
                     <li class="changes_item changes_item-Added">
                         <span class="changes_item-label">Added</span><span class="changes_item-label-sep">:</span> @WebKitUrl(change.NewStatus)
                         <table>
-                            @Html.Partial("Partial/ChangesTableRow", new[]
+                            @await Html.PartialAsync("Partial/ChangesTableRow", new[]
                             {
                                 new ChangesTableRowViewModel("Status", change.NewStatus.Status.Status),
                                 new ChangesTableRowViewModel("EnabledByDefault", change.NewStatus.Status.EnabledByDefault),
@@ -260,7 +262,7 @@
                             var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
                         }
                         <table>
-                            @Html.Partial("Partial/ChangesTableRow", new[]
+                            @await Html.PartialAsync("Partial/ChangesTableRow", new[]
                             {
                                 new ChangesTableRowViewModel("Status", newStatus.Status.Status, oldStatus.Status.Status),
                                 new ChangesTableRowViewModel("EnabledByDefault", newStatus.Status.EnabledByDefault, oldStatus.Status.EnabledByDefault),
@@ -290,7 +292,7 @@
                     <li class="changes_item changes_item-Added">
                         <span class="changes_item-label">Added</span><span class="changes_item-label-sep">:</span> @MozillaUrl(change.NewStatus)
                         <table>
-                            @Html.Partial("Partial/ChangesTableRow", new[]
+                            @await Html.PartialAsync("Partial/ChangesTableRow", new[]
                             {
                                 new ChangesTableRowViewModel("Status", change.NewStatus.Status),
                                 new ChangesTableRowViewModel("Channel", change.NewStatus.Channel),
@@ -313,7 +315,7 @@
                             var (oldStatus, newStatus) = (change.OldStatus, change.NewStatus);
                         }
                         <table>
-                            @Html.Partial("Partial/ChangesTableRow", new[]
+                            @await Html.PartialAsync("Partial/ChangesTableRow", new[]
                             {
                                 new ChangesTableRowViewModel("Status", newStatus.Status, oldStatus.Status),
                                 new ChangesTableRowViewModel("Channel", newStatus.Channel, oldStatus.Channel),

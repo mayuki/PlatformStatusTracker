@@ -9,5 +9,5 @@
 
 <article>
     <h1>@Model.Date.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)</h1>
-    @Html.Partial("Partial/ChangeSets", Model.ChangeSets)
+    <partial name="Partial/ChangeSets" model="Model.ChangeSets" />
 </article>
