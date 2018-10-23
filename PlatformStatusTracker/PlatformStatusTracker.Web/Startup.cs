@@ -85,6 +85,7 @@ namespace PlatformStatusTracker.Web
 
             // Redirect: Hostname ----------
             app.UseRedirectToCanonicalHost("platformstatustracker.azurewebsites.net", "platformstatus.io");
+            app.UseHttpsRedirection();
 
             // Static File ----------
             app.UseStaticFiles(new StaticFileOptions
