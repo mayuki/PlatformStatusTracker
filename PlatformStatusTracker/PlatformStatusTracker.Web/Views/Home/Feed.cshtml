@@ -25,7 +25,7 @@
             <updated>@Model.GetUpdatedAtByDate(date).ToString("yyyy-MM-dd'T'HH:mm:ss.fffK", DateTimeFormatInfo.InvariantInfo)</updated>
             <content type="html">
                 @{
-                    var content = Html.Partial("Partial/ChangeSets", new ChangeSetsViewModel
+                    var content = await Html.PartialAsync("Partial/ChangeSets", new ChangeSetsViewModel
                     {
                         HideIcon = true,
                         IeChangeSet = Model.IeChangeSetsByDate.ContainsKey(date) ? Model.IeChangeSetsByDate[date] : null,

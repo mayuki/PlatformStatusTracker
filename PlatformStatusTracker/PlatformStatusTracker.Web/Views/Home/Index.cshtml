@@ -11,7 +11,7 @@
 {
     <article>
         <h1><a href="@Url.Action("Changes", "Home", new { Date = date.ToString("yyyy-MM-dd") })">@date.ToString("yyyy-MM-dd", DateTimeFormatInfo.InvariantInfo)</a></h1>
-        @Html.Partial("Partial/ChangeSets", new ChangeSetsViewModel
+        @await Html.PartialAsync("Partial/ChangeSets", new ChangeSetsViewModel
         {
             IeChangeSet = Model.IeChangeSetsByDate.ContainsKey(date) ? Model.IeChangeSetsByDate[date] : null,
             ChromeChangeSet = Model.ChromeChangeSetsByDate.ContainsKey(date) ? Model.ChromeChangeSetsByDate[date] : null,
