@@ -64,7 +64,8 @@ namespace PlatformStatusTracker.Web
                     {
                         options.CacheProfiles.Add("DefaultCache", new CacheProfile { NoStore = true });
                     }
-                });
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,7 +77,6 @@ namespace PlatformStatusTracker.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {
