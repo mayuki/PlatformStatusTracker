@@ -25,6 +25,7 @@ namespace PlatformStatusTracker.Web
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
 #if DEBUG
+                .AddJsonFile($"appsettings.Local.json", optional: true)
                 .AddUserSecrets<Startup>()
 #endif
                 .AddEnvironmentVariables();
