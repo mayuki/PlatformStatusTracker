@@ -23,6 +23,14 @@
       },
       "applicationUrl": "http://localhost:22648"
     },
+    "PlatformStatusTracker.Web (Production)": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      },
+      "applicationUrl": "http://localhost:22648"
+    },
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
