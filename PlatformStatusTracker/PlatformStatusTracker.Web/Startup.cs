@@ -9,10 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PlatformStatusTracker.Core.Repository;
 using PlatformStatusTracker.Core.Configuration;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.AspNetCore.Mvc;
 using PlatformStatusTracker.Web.Infrastracture.Middlewares;
 using PlatformStatusTracker.Web.Infrastracture;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace PlatformStatusTracker.Web
 {
@@ -25,6 +25,7 @@ namespace PlatformStatusTracker.Web
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
 #if DEBUG
+                .AddJsonFile($"appsettings.Local.json", optional: true)
                 .AddUserSecrets<Startup>()
 #endif
                 .AddEnvironmentVariables();
@@ -51,13 +52,20 @@ namespace PlatformStatusTracker.Web
                 options.EnableAdaptiveSampling = false;
             });
 
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
+            });
+
             // Add framework services.
             services.AddMvc()
                 .AddMvcOptions(options =>
                 {
                     if (!Environment.IsDevelopment())
                     {
-                        options.Filters.Add(new RequireHttpsAttribute());
                         options.CacheProfiles.Add("DefaultCache", new CacheProfile { Duration = 60 * 5 });
                     }
                     else
@@ -71,6 +79,8 @@ namespace PlatformStatusTracker.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            app.UseForwardedHeaders();
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 

@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          command: docker build -t mayuki/platformstatusio -f PlatformStatusTracker/PlatformStatusTracker.Web/Dockerfile .
+      - run:
+          command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+      - run:
+          command: docker push mayuki/platformstatusio
