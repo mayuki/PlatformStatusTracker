@@ -5,7 +5,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: docker build -t mayuki/platformstatusio -f PlatformStatusTracker/PlatformStatusTracker.Web/Dockerfile .
+          command: docker build -t mayuki/platformstatusio -f PlatformStatusTracker/PlatformStatusTracker.Web/Dockerfile PlatformStatusTracker
       - run:
           command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
       - run:
