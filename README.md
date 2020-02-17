@@ -6,8 +6,7 @@
 
 ## Platform data sources
 
-- https://dev.windows.com/en-us/microsoft-edge/platform/status/
+- https://developer.microsoft.com/en-us/microsoft-edge/status/
 - http://www.chromestatus.com/features
-- http://trac.webkit.org/browser/trunk/Source/WebCore/features.json
-- http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/features.json
+- https://webkit.org/status/
 - https://platform-status.mozilla.org/
