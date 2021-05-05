@@ -8,17 +8,19 @@ using PlatformStatusTracker.Core.Enum;
 using PlatformStatusTracker.Core.Repository;
 using PlatformStatusTracker.Core.Data;
 using Newtonsoft.Json;
-using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace PlatformStatusTracker.Core.Model
 {
     public class DataUpdateAgent
     {
-        private IChangeSetRepository _changeSetRepository;
-        private IStatusRawDataRepository _statusRawDataRepository;
+        private readonly IChangeSetRepository _changeSetRepository;
+        private readonly IStatusRawDataRepository _statusRawDataRepository;
+        private readonly ILogger _logger;
 
-        public DataUpdateAgent(IChangeSetRepository repository, IStatusRawDataRepository statusRawDataRepository)
+        public DataUpdateAgent(ILogger<DataUpdateAgent> logger, IChangeSetRepository repository, IStatusRawDataRepository statusRawDataRepository)
         {
+            _logger = logger;
             _changeSetRepository = repository;
             _statusRawDataRepository = statusRawDataRepository;
         }
@@ -28,12 +30,12 @@ namespace PlatformStatusTracker.Core.Model
             var now = DateTime.UtcNow;
 
             // Download a JSON from a source site.
-            Debug.WriteLine("Download Status: StatusDataType={0}; Url={1}", dataType, jsonUrl);
+            _logger.LogInformation("Download Status: StatusDataType={0}; Url={1}", dataType, jsonUrl);
             var httpClient = new HttpClient();
             var newJson = await httpClient.GetStringAsync(jsonUrl);
 
             // Save the new JSON to Blog Storage.
-            Debug.WriteLine("Upload/Save to Storage: StatusDataType={0}; Url={1}", dataType, jsonUrl);
+            _logger.LogInformation("Upload/Save to Storage: StatusDataType={0}; Url={1}", dataType, jsonUrl);
             await _statusRawDataRepository.InsertAsync(dataType, now, newJson);
 
             // Fetch a latest changeset from Table
@@ -47,7 +49,7 @@ namespace PlatformStatusTracker.Core.Model
                 var from = (latestChangeSet.Date.Date == now.Date)
                     ? latestChangeSet.From
                     : latestChangeSet.Date;
-                Debug.WriteLine("Fetch data: StatusDataType={0}; Date={1}", dataType, from);
+                _logger.LogInformation("Fetch data: StatusDataType={0}; Date={1}", dataType, from);
                 var prevJson = await _statusRawDataRepository.GetByDateAsync(dataType, from);
 
                 // Create a changeset from two JSONs.
@@ -60,12 +62,12 @@ namespace PlatformStatusTracker.Core.Model
                 var prevChangeSet = (await _changeSetRepository.GetChangeSetsRangeAsync(dataType, from, from, 1)).FirstOrDefault();
                 if (prevChangeSet != null && JsonConvert.SerializeObject(prevChangeSet.Changes) == changeInfoJson)
                 {
-                    Debug.WriteLine("Not Modified: StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
+                    _logger.LogInformation("Not Modified: StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
                     return;
                 }
 
                 // Save new changeset to Table.
-                Debug.WriteLine("Insert/Update: StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
+                _logger.LogInformation("Insert/Update: StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
                 await _changeSetRepository.InsertOrReplaceAsync(dataType, now, changeInfoJson, from);
             }
             else
