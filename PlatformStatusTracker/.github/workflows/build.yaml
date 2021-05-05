@@ -1,0 +1,32 @@
+name: Build-Development
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_NOLOGO: true
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.x'
+
+    # Build
+    - run: dotnet restore
+    - run: dotnet build -c Release PlatformStatusTracker
+
+    # Run Unit tests
+    #- run: dotnet test -c Release --no-build --logger trx --results-directory $GITHUB_WORKSPACE/artifacts
+    #- name: Shellcheck for Bash completion
+    #  run: |
+    #    cd samples/GettingStarted.SubCommandApp
+    #    shellcheck <(dotnet run -- --completion bash)
