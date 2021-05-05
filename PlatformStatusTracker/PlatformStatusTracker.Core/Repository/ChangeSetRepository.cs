@@ -24,6 +24,7 @@ namespace PlatformStatusTracker.Core.Repository
     public class ChangeSetAzureStorageRepository : IChangeSetRepository
     {
         private readonly string _connectionString;
+        private bool _tableExists;
 
         public ChangeSetAzureStorageRepository(IOptions<ConnectionStringOptions> connectionStringOptions)
             : this(connectionStringOptions.Value.AzureStorageConnectionString)
@@ -42,7 +43,11 @@ namespace PlatformStatusTracker.Core.Repository
             var tableClient = storageAccount.CreateCloudTableClient();
 
             var table = tableClient.GetTableReference("ChangeSets");
-            await table.CreateIfNotExistsAsync().ConfigureAwait(false);
+            if (!_tableExists)
+            {
+                await table.CreateIfNotExistsAsync().ConfigureAwait(false);
+                _tableExists = true;
+            }
 
             return table;
         }
