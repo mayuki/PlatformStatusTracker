@@ -21,7 +21,7 @@ namespace PlatformStatusTracker.Core.Repository
     {
         private readonly string _connectionString;
         public StatusRawDataAzureStorageRepository(IOptions<ConnectionStringOptions> connectionStringOptions)
-            : this(connectionStringOptions.Value.AzureStoreageConnectionString)
+            : this(connectionStringOptions.Value.AzureStorageConnectionString)
         {
         }
 

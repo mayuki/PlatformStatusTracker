@@ -26,7 +26,7 @@ namespace PlatformStatusTracker.Core.Repository
         private readonly string _connectionString;
 
         public ChangeSetAzureStorageRepository(IOptions<ConnectionStringOptions> connectionStringOptions)
-            : this(connectionStringOptions.Value.AzureStoreageConnectionString)
+            : this(connectionStringOptions.Value.AzureStorageConnectionString)
         {
         }
 
