@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: ${{ secrets.AzureAppService_ContainerUsername_18949c630afa4129924c883dcfb901f6 }}/mayuki/platformstatusio:${{ github.sha }}
-        file: ./Dockerfile
+        file: PlatformStatusTracker/PlatformStatusTracker.Web/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
