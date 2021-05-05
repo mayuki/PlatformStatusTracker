@@ -21,7 +21,7 @@ jobs:
         dotnet-version: '5.0.x'
 
     # Build
-    - run: dotnet restore
+    - run: dotnet restore PlatformStatusTracker
     - run: dotnet build -c Release PlatformStatusTracker
 
     # Run Unit tests
