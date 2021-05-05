@@ -29,7 +29,6 @@ jobs:
     - name: Build and push container image to registry
       uses: docker/build-push-action@v2
       with:
-        context: .
         push: true
         tags: ${{ secrets.AzureAppService_ContainerUsername_18949c630afa4129924c883dcfb901f6 }}/mayuki/platformstatusio:${{ github.sha }}
         file: PlatformStatusTracker/PlatformStatusTracker.Web/Dockerfile
