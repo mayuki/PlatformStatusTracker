@@ -39,32 +39,40 @@ namespace PlatformStatusTracker.Core.Model
             // Fetch a latest changeset from Table
             var latestChangeSet = await _changeSetRepository.GetLatestChangeSetAsync(dataType);
 
-            // Fetch the previous JSON from Blob Storage.
-            // If the changeset's Date is same date, downloads a previous day's JSON.
-            // Otherwise It downloads latest JSON.
-            var from = (latestChangeSet.Date.Date == now.Date)
+            if (latestChangeSet != null)
+            {
+                // Fetch the previous JSON from Blob Storage.
+                // If the changeset's Date is same date, downloads a previous day's JSON.
+                // Otherwise It downloads latest JSON.
+                var from = (latestChangeSet.Date.Date == now.Date)
                     ? latestChangeSet.From
                     : latestChangeSet.Date;
-            Debug.WriteLine("Fetch data: StatusDataType={0}; Date={1}", dataType, from);
-            var prevJson = await _statusRawDataRepository.GetByDateAsync(dataType, from);
+                Debug.WriteLine("Fetch data: StatusDataType={0}; Date={1}", dataType, from);
+                var prevJson = await _statusRawDataRepository.GetByDateAsync(dataType, from);
 
-            // Create a changeset from two JSONs.
-            var curStatuses = PlatformStatuses.Deserialize(dataType, newJson);
-            var prevStatuses = PlatformStatuses.Deserialize(dataType, prevJson);
-            var changeInfo = PlatformStatusTracking.GetChangeInfoSetFromStatuses(prevStatuses, curStatuses);
-            var changeInfoJson = JsonConvert.SerializeObject(changeInfo);
+                // Create a changeset from two JSONs.
+                var curStatuses = PlatformStatuses.Deserialize(dataType, newJson);
+                var prevStatuses = PlatformStatuses.Deserialize(dataType, prevJson);
+                var changeInfo = PlatformStatusTracking.GetChangeInfoSetFromStatuses(prevStatuses, curStatuses);
+                var changeInfoJson = JsonConvert.SerializeObject(changeInfo);
 
-            // Load previous changeset from Table and check modification.
-            var prevChangeSet = (await _changeSetRepository.GetChangeSetsRangeAsync(dataType, from, from, 1)).FirstOrDefault();
-            if (prevChangeSet != null && JsonConvert.SerializeObject(prevChangeSet.Changes) == changeInfoJson)
-            {
-                Debug.WriteLine("Not Modified: StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
-                return;
+                // Load previous changeset from Table and check modification.
+                var prevChangeSet = (await _changeSetRepository.GetChangeSetsRangeAsync(dataType, from, from, 1)).FirstOrDefault();
+                if (prevChangeSet != null && JsonConvert.SerializeObject(prevChangeSet.Changes) == changeInfoJson)
+                {
+                    Debug.WriteLine("Not Modified: StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
+                    return;
+                }
+
+                // Save new changeset to Table.
+                Debug.WriteLine("Insert/Update: StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
+                await _changeSetRepository.InsertOrReplaceAsync(dataType, now, changeInfoJson, from);
             }
-
-            // Save new changeset to Table.
-            Debug.WriteLine("Insert/Update: StatusDataType={0}; Date={1}; From={2}", dataType, now, from);
-            await _changeSetRepository.InsertOrReplaceAsync(dataType, now, changeInfoJson, from);
+            else
+            {
+                // Previous changeset doesn't exist on the table. Create a new row.
+                await _changeSetRepository.InsertOrReplaceAsync(dataType, now, "[]", now);
+            }
         }
 
         public async Task UpdateAllAsync()
