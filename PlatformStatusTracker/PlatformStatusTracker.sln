@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26608.5
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatformStatusTracker.Web", "PlatformStatusTracker.Web\PlatformStatusTracker.Web.csproj", "{2545AB2A-E6C6-4FD0-8C7B-08A66CB2310E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatformStatusTracker.Core", "PlatformStatusTracker.Core\PlatformStatusTracker.Core.csproj", "{77D7CA19-F55B-4CF0-B2B1-C4322427BE72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformStatusTracker.Updater", "PlatformStatusTracker.Updater\PlatformStatusTracker.Updater.csproj", "{1BBEABB2-4D96-47E3-82DB-8095C2034DC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,15 @@ Global
 		{77D7CA19-F55B-4CF0-B2B1-C4322427BE72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77D7CA19-F55B-4CF0-B2B1-C4322427BE72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77D7CA19-F55B-4CF0-B2B1-C4322427BE72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BBEABB2-4D96-47E3-82DB-8095C2034DC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BBEABB2-4D96-47E3-82DB-8095C2034DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BBEABB2-4D96-47E3-82DB-8095C2034DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BBEABB2-4D96-47E3-82DB-8095C2034DC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {23D65DE0-D2E3-4F30-AE4D-B361C294AC9C}
 	EndGlobalSection
 EndGlobal

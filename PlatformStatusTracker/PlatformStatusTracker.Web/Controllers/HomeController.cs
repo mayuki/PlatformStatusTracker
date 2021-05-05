@@ -15,14 +15,10 @@ namespace PlatformStatusTracker.Web.Controllers
     public class HomeController : Controller
     {
         private IChangeSetRepository _changeSetRepository;
-        private IStatusRawDataRepository _statusRawDataRepository;
-        private ConnectionStringOptions _connectionString;
 
-        public HomeController(IChangeSetRepository changeSetRepository, IStatusRawDataRepository statusRawDataRepository, IOptions<ConnectionStringOptions> connectionString)
+        public HomeController(IChangeSetRepository changeSetRepository)
         {
             _changeSetRepository = changeSetRepository;
-            _statusRawDataRepository = statusRawDataRepository;
-            _connectionString = connectionString.Value;
         }
 
         [ResponseCache(CacheProfileName = "DefaultCache")]
@@ -54,18 +50,6 @@ namespace PlatformStatusTracker.Web.Controllers
 
             var viewModel = await ChangesViewModel.CreateAsync(_changeSetRepository, dateTime);
             return View(viewModel);
-        }
-
-        public async Task<IActionResult> UpdateStatus(String key)
-        {
-            if (String.IsNullOrWhiteSpace(_connectionString.UpdateKey) || key != _connectionString.UpdateKey)
-            {
-                return StatusCode(403);
-            }
-
-            await new DataUpdateAgent(_changeSetRepository, _statusRawDataRepository).UpdateAllAsync();
-
-            return Content("OK", "text/plain");
         }
 
         public IActionResult Error()
