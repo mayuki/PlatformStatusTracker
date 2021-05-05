@@ -3,38 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using PlatformStatusTracker.Core.Repository;
 using PlatformStatusTracker.Core.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using PlatformStatusTracker.Web.Infrastracture.Middlewares;
 using PlatformStatusTracker.Web.Infrastracture;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Hosting;
 
 namespace PlatformStatusTracker.Web
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostEnvironment env, IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-#if DEBUG
-                .AddJsonFile($"appsettings.Local.json", optional: true)
-                .AddUserSecrets<Startup>()
-#endif
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = configuration;
             Environment = env;
         }
 
-        public IConfigurationRoot Configuration { get; }
-        private IHostingEnvironment Environment { get; }
+        public IConfiguration Configuration { get; }
+        private IHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -72,17 +62,13 @@ namespace PlatformStatusTracker.Web
                     {
                         options.CacheProfiles.Add("DefaultCache", new CacheProfile { NoStore = true });
                     }
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             app.UseForwardedHeaders();
-
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
 
             if (env.IsDevelopment())
             {
@@ -107,21 +93,22 @@ namespace PlatformStatusTracker.Web
             app.UseResponseCaching();
 
             // ASP.NET MVC Core ----------
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "Home/Feed",
-                    template: @"Feed",
+                    pattern: @"Feed",
                     defaults: new { controller = "Home", action = "Feed" });
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "Home/Changes",
-                    template: @"Changes/{date:regex(^\d{{4}}-\d{{1,2}}-\d{{1,2}})}",
+                    pattern: @"Changes/{date:regex(^\d{{4}}-\d{{1,2}}-\d{{1,2}})}",
                     defaults: new { controller = "Home", action = "Changes" });
-
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }
