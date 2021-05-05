@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: ${{ secrets.AzureAppService_ContainerUsername_18949c630afa4129924c883dcfb901f6 }}/mayuki/platformstatusio:${{ github.sha }}
+        tags: ${{ secrets.AzureAppService_ContainerUsername_18949c630afa4129924c883dcfb901f6 }}/platformstatusio:${{ github.sha }}
         file: PlatformStatusTracker/PlatformStatusTracker.Web/Dockerfile
 
   deploy:
@@ -48,4 +48,4 @@ jobs:
         app-name: 'platformstatustracker'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_5d2ba33bc19c4bb58ff6cb5bce6bd478 }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_18949c630afa4129924c883dcfb901f6 }}/mayuki/platformstatusio:${{ github.sha }}'
+        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_18949c630afa4129924c883dcfb901f6 }}/platformstatusio:${{ github.sha }}'
