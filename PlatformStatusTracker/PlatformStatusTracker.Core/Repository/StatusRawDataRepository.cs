@@ -20,6 +20,8 @@ namespace PlatformStatusTracker.Core.Repository
     public class StatusRawDataAzureStorageRepository : IStatusRawDataRepository
     {
         private readonly string _connectionString;
+        private bool _tableExists;
+
         public StatusRawDataAzureStorageRepository(IOptions<ConnectionStringOptions> connectionStringOptions)
             : this(connectionStringOptions.Value.AzureStorageConnectionString)
         {
@@ -50,7 +52,12 @@ namespace PlatformStatusTracker.Core.Repository
             var storageAccount = CloudStorageAccount.Parse(_connectionString);
             var blobClient = storageAccount.CreateCloudBlobClient();
             var container = blobClient.GetContainerReference("statuses");
-            await container.CreateIfNotExistsAsync().ConfigureAwait(false);
+
+            if (!_tableExists)
+            {
+                await container.CreateIfNotExistsAsync().ConfigureAwait(false);
+                _tableExists = true;
+            }
 
             return container;
         }

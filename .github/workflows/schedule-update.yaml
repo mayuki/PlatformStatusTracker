@@ -16,6 +16,6 @@ jobs:
       with:
         dotnet-version: '5.0.x'
 
-    - run: dotnet run -c Release PlatformStatusTracker -p PlatformStatusTracker/PlatformStatusTracker.Updater/PlatformStatusTracker.Updater.csproj
+    - run: dotnet run -c Release PlatformStatusTracker -p PlatformStatusTracker/PlatformStatusTracker.Updater/PlatformStatusTracker.Updater.csproj -- update-daily
       env:
         DOTNET_AzureStorageConnectionString: ${{ secrets.DOTNET_AZURESTORAGECONNECTIONSTRING }}

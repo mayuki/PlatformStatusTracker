@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Cocona;
 using Microsoft.Extensions.DependencyInjection;
 using PlatformStatusTracker.Core.Configuration;
+using PlatformStatusTracker.Core.Enum;
 using PlatformStatusTracker.Core.Model;
 using PlatformStatusTracker.Core.Repository;
 
@@ -23,9 +24,14 @@ namespace PlatformStatusTracker.Updater
                 .Run<Program>(args);
         }
 
-        public async Task Run([FromService] DataUpdateAgent agent)
+        public async Task UpdateDaily([FromService] DataUpdateAgent agent)
         {
             await agent.UpdateAllAsync();
+        }
+
+        public async Task UpdateRange([FromService] DataUpdateAgent agent, [Option('t')]StatusDataType statusDataType, DateTime from, DateTime to)
+        {
+            await agent.UpdateChangeSetByRangeAsync(statusDataType, from, to);
         }
     }
 }
