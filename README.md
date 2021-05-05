@@ -1,6 +1,9 @@
 # Browser Platform Status Tracker
-[![Build status](https://ci.appveyor.com/api/projects/status/x2dj440jc29x7kvc?svg=true)](https://ci.appveyor.com/project/mayuki/platformstatustracker)
-[![CircleCI](https://circleci.com/gh/mayuki/PlatformStatusTracker.svg?style=svg)](https://circleci.com/gh/mayuki/PlatformStatusTracker)
+[![Build and deploy container app to Azure Web App - platformstatustracker](https://github.com/mayuki/PlatformStatusTracker/actions/workflows/master_platformstatustracker.yml/badge.svg)](https://github.com/mayuki/PlatformStatusTracker/actions/workflows/master_platformstatustracker.yml)
+
+[![Build-Development](https://github.com/mayuki/PlatformStatusTracker/actions/workflows/build.yaml/badge.svg)](https://github.com/mayuki/PlatformStatusTracker/actions/workflows/build.yaml)
+
+[![Schedule-Update](https://github.com/mayuki/PlatformStatusTracker/actions/workflows/schedule-update.yaml/badge.svg)](https://github.com/mayuki/PlatformStatusTracker/actions/workflows/schedule-update.yaml)
 
 [https://platformstatus.io/](https://platformstatus.io/)
 
