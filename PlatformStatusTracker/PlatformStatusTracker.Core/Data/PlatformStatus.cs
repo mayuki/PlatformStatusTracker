@@ -24,7 +24,7 @@ namespace PlatformStatusTracker.Core.Data
         {
             var statuses = JsonConvert.DeserializeObject<WebKitPlatformStatuses>(jsonValue);
 
-            return statuses.Features.Concat(statuses.Specification).Where(x => x.Status != null).ToArray();
+            return statuses.Features/*.Concat(statuses.Specification)*/.Where(x => x.Status != null).ToArray();
         }
 
         public static MozillaPlatformStatus[] DeserializeForMozillaStatus(string jsonValue)
