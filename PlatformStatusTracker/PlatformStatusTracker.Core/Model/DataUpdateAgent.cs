@@ -23,7 +23,7 @@ namespace PlatformStatusTracker.Core.Model
             (StatusDataType.Edge, "https://raw.githubusercontent.com/MicrosoftEdge/Status/production/status.json"),
             (StatusDataType.WebKitWebCore, "http://svn.webkit.org/repository/webkit/trunk/Source/WebCore/features.json"),
             (StatusDataType.WebKitJavaScriptCore, "http://svn.webkit.org/repository/webkit/trunk/Source/JavaScriptCore/features.json"),
-            (StatusDataType.Mozilla, "https://platform-status.mozilla.org/api/status"),
+            //(StatusDataType.Mozilla, "https://platform-status.mozilla.org/api/status"),
         };
 
         public DataUpdateAgent(ILogger<DataUpdateAgent> logger, IChangeSetRepository repository, IStatusRawDataRepository statusRawDataRepository)
