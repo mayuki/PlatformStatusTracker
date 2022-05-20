@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +27,8 @@ namespace PlatformStatusTracker.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHostedService<StartupService>();
+
             services.Configure<ConnectionStringOptions>(Configuration);
 
             services.AddTransient<IChangeSetRepository, ChangeSetAzureStorageRepository>();
