@@ -7,6 +7,6 @@ namespace PlatformStatusTracker.Core.Configuration
 {
     public class ConnectionStringOptions
     {
-        public string AzureStorageConnectionString { get; set; }
+        public string? AzureStorageConnectionString { get; set; }
     }
 }

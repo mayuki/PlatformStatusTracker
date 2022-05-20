@@ -1,13 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31205.134
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatformStatusTracker.Web", "PlatformStatusTracker.Web\PlatformStatusTracker.Web.csproj", "{2545AB2A-E6C6-4FD0-8C7B-08A66CB2310E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatformStatusTracker.Core", "PlatformStatusTracker.Core\PlatformStatusTracker.Core.csproj", "{77D7CA19-F55B-4CF0-B2B1-C4322427BE72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlatformStatusTracker.Updater", "PlatformStatusTracker.Updater\PlatformStatusTracker.Updater.csproj", "{1BBEABB2-4D96-47E3-82DB-8095C2034DC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlatformStatusTracker.Updater", "PlatformStatusTracker.Updater\PlatformStatusTracker.Updater.csproj", "{1BBEABB2-4D96-47E3-82DB-8095C2034DC3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6DB7CE87-213C-4C9D-9D02-7EABC96201B7}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\build.yaml = ..\.github\workflows\build.yaml
+		..\.github\workflows\master_platformstatustracker.yml = ..\.github\workflows\master_platformstatustracker.yml
+		..\.github\workflows\schedule-update.yaml = ..\.github\workflows\schedule-update.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
