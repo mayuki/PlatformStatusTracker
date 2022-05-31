@@ -11,8 +11,8 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
 {
     public class ChangesViewModel
     {
-        public ChangeSetsViewModel ChangeSets { get; private set; }
-        public DateTime Date { get; private set; }
+        public ChangeSetsViewModel ChangeSets { get; init; } = default!;
+        public DateTime Date { get; init; }
 
         public static async Task<ChangesViewModel> CreateAsync(IChangeSetRepository changeSetRepository, DateTime date)
         {

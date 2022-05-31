@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using PlatformStatusTracker.Core.Configuration;
 using PlatformStatusTracker.Core.Repository;
-using PlatformStatusTracker.Core.Model;
-using PlatformStatusTracker.Core.Enum;
 using PlatformStatusTracker.Web.ViewModels.Home;
+using PlatformStatusTracker.Web.Filters;
 
 namespace PlatformStatusTracker.Web.Controllers
 {
@@ -21,12 +18,13 @@ namespace PlatformStatusTracker.Web.Controllers
             _changeSetRepository = changeSetRepository;
         }
 
-        [ResponseCache(CacheProfileName = "DefaultCache")]
+        [StaleWhileRevalidate(CacheProfileName = "DefaultCache", StaleWhileRevalidateDuration = 300)]
         public async Task<IActionResult> Index()
         {
             return View(await HomeIndexViewModel.CreateAsync(_changeSetRepository));
         }
 
+        [StaleWhileRevalidate(CacheProfileName = "DefaultCache", StaleWhileRevalidateDuration = 300)]
         public async Task<IActionResult> Feed(bool shouldFilterIncomplete = true)
         {
             var result = View(await HomeIndexViewModel.CreateAsync(_changeSetRepository, shouldFilterIncomplete));
@@ -34,7 +32,7 @@ namespace PlatformStatusTracker.Web.Controllers
             return result;
         }
 
-        [ResponseCache(CacheProfileName = "DefaultCache")]
+        [StaleWhileRevalidate(CacheProfileName = "DefaultCache", StaleWhileRevalidateDuration = 300)]
         public async Task<IActionResult> Changes(String date)
         {
             if (String.IsNullOrWhiteSpace(date))

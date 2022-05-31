@@ -10,13 +10,13 @@ namespace PlatformStatusTracker.Web.ViewModels.Home
 {
     public class HomeIndexViewModel
     {
-        public Dictionary<DateTime, ChangeSet> IeChangeSetsByDate { get; private set; }
-        public Dictionary<DateTime, ChangeSet> ChromeChangeSetsByDate { get; private set; }
-        public Dictionary<DateTime, ChangeSet> WebKitWebCoreChangeSetsByDate { get; private set; }
-        public Dictionary<DateTime, ChangeSet> WebKitJavaScriptCoreChangeSetsByDate { get; private set; }
-        public Dictionary<DateTime, ChangeSet> MozillaChangeSetsByDate { get; private set; }
-        public DateTime[] Dates { get; private set; }
-        public DateTime LastUpdatedAt { get; private set; }
+        public Dictionary<DateTime, ChangeSet> IeChangeSetsByDate { get; init; } = default!;
+        public Dictionary<DateTime, ChangeSet> ChromeChangeSetsByDate { get; init; } = default!;
+        public Dictionary<DateTime, ChangeSet> WebKitWebCoreChangeSetsByDate { get; init; } = default!;
+        public Dictionary<DateTime, ChangeSet> WebKitJavaScriptCoreChangeSetsByDate { get; init; } = default!;
+        public Dictionary<DateTime, ChangeSet> MozillaChangeSetsByDate { get; init; } = default!;
+        public DateTime[] Dates { get; init; } = default!;
+        public DateTime LastUpdatedAt { get; init; } = default!;
 
         public static async Task<HomeIndexViewModel> CreateAsync(IChangeSetRepository changeSetRepository, bool shouldFilterIncomplete = false)
         {

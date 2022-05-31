@@ -58,9 +58,9 @@
 }
 @functions
 {
-    string Value(int? value) => value.HasValue ? value.ToString() : "(n/a)";
+    string Value(int? value) => value?.ToString() ?? "(n/a)";
     string Value(string value) => !String.IsNullOrWhiteSpace(value) ? value : "(n/a)";
-    string Value(bool? value) => value.HasValue ? value.ToString() : "(n/a)";
+    string Value(bool? value) => value?.ToString() ?? "(n/a)";
 }
 
 @if (Model.IeChangeSet != null && Model.IeChangeSet.Changes.Any())

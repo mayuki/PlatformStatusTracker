@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.StaticFiles;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace PlatformStatusTracker.Web.Infrastracture
             _baseProvider = baseProvider;
         }
 
-        public bool TryGetContentType(string subpath, out string contentType)
+        public bool TryGetContentType(string subpath, [NotNullWhen(true)]out string? contentType)
         {
             if (subpath.StartsWith("/.well-known/acme-challenge/"))
             {
