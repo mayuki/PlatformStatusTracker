@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<PlatformStatusTracker.Web.ViewModels.Home.ChangesTableRowViewModel>
 @functions
 {
-    string Value(object value)
+    string Value(object? value)
     {
         switch (value)
         {
@@ -10,7 +10,7 @@
             case bool v:
                 return v.ToString();
             default:
-                return value == null ? "(n/a)" : value.ToString();
+                return value?.ToString() ?? "(n/a)";
         }
     }
 }

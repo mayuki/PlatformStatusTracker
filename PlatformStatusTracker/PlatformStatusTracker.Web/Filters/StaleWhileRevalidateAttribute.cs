@@ -9,7 +9,7 @@ public class StaleWhileRevalidateAttribute : Attribute, IFilterFactory
 {
     bool IFilterFactory.IsReusable => true;
 
-    public string CacheProfileName { get; init; }
+    public string? CacheProfileName { get; init; }
     public int StaleWhileRevalidateDuration { get; init; }
 
     public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
