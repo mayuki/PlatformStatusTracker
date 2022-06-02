@@ -56,7 +56,7 @@ namespace PlatformStatusTracker.Web
                 {
                     if (!Environment.IsDevelopment())
                     {
-                        options.CacheProfiles.Add("DefaultCache", new CacheProfile { Duration = 60 * 60 });
+                        options.CacheProfiles.Add("DefaultCache", new CacheProfile { Duration = 60 * 60 * 2 });
                     }
                     else
                     {
