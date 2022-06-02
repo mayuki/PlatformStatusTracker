@@ -18,13 +18,13 @@ namespace PlatformStatusTracker.Web.Controllers
             _changeSetRepository = changeSetRepository;
         }
 
-        [StaleWhileRevalidate(CacheProfileName = "DefaultCache", StaleWhileRevalidateDuration = 300)]
+        [StaleWhileRevalidate(CacheProfileName = "DefaultCache", StaleWhileRevalidateDuration = 60 * 60)]
         public async Task<IActionResult> Index()
         {
             return View(await HomeIndexViewModel.CreateAsync(_changeSetRepository));
         }
 
-        [StaleWhileRevalidate(CacheProfileName = "DefaultCache", StaleWhileRevalidateDuration = 300)]
+        [StaleWhileRevalidate(CacheProfileName = "DefaultCache", StaleWhileRevalidateDuration = 60 * 60)]
         public async Task<IActionResult> Feed(bool shouldFilterIncomplete = true)
         {
             var result = View(await HomeIndexViewModel.CreateAsync(_changeSetRepository, shouldFilterIncomplete));
@@ -32,7 +32,7 @@ namespace PlatformStatusTracker.Web.Controllers
             return result;
         }
 
-        [StaleWhileRevalidate(CacheProfileName = "DefaultCache", StaleWhileRevalidateDuration = 300)]
+        [StaleWhileRevalidate(CacheProfileName = "DefaultCache", StaleWhileRevalidateDuration = 60 * 60)]
         public async Task<IActionResult> Changes(String date)
         {
             if (String.IsNullOrWhiteSpace(date))
