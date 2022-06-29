@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@(String.IsNullOrWhiteSpace(ViewBag.Title) ? "" : ViewBag.Title + " - ")Browser Platform Status Tracker</title>
-    <link rel="alternate" type="application/atom+xml" title="Browser Platform Status Tracker" href="@Url.Action("Feed", "Home", new object(), "http")" />
+    <link rel="alternate" type="application/atom+xml" title="Browser Platform Status Tracker" href="@Url.Action("Feed", "Home", new object(), "https")" />
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
@@ -62,8 +62,8 @@
         <hr />
         <footer>
             @RenderSection("Footer", required: false)
-            <p><a class="service-link" asp-action="Feed"><img class="shared-icon" src="~/images/shared/ic_rss_feed_black_24px.svg" alt="Feed" /> Subscribe</a> <a class="service-link" href="http://github.com/mayuki/PlatformStatusTracker"><img class="shared-icon" src="~/images/shared/GitHub-Mark-64px.png" alt="GitHub" /> GitHub</a></p>
-            <p>Source: <a href="https://platform-status.mozilla.org/">Firefox Platform Status</a>, <a href="http://www.chromestatus.com/features">Chromium Dashboard</a>, <a href="https://developer.microsoft.com/en-us/microsoft-edge/status/">Microsoft Edge Platform Status</a> and <a href="https://webkit.org/status/">WebKit Status</a> (Creative Commons Attribution 2.5 License)</p>
+            <p><a class="service-link" asp-action="Feed"><img class="shared-icon" src="~/images/shared/ic_rss_feed_black_24px.svg" alt="Feed" /> Subscribe</a> <a class="service-link" href="https://github.com/mayuki/PlatformStatusTracker"><img class="shared-icon" src="~/images/shared/GitHub-Mark-64px.png" alt="GitHub" /> GitHub</a></p>
+            <p>Source: <a href="https://platform-status.mozilla.org/">Firefox Platform Status</a>, <a href="https://chromestatus.com/features">Chromium Dashboard</a>, <a href="https://developer.microsoft.com/en-us/microsoft-edge/status/">Microsoft Edge Platform Status</a> and <a href="https://webkit.org/status/">WebKit Status</a> (Creative Commons Attribution 2.5 License)</p>
             <p>Mayuki Sawatari &lt;mayuki@misuzilla.org&gt;</p>
         </footer>
     </div>
