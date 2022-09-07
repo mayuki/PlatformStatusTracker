@@ -21,8 +21,8 @@ namespace PlatformStatusTracker.Core.Model
         {
             (StatusDataType.Chromium, "http://www.chromestatus.com/features.json"),
             (StatusDataType.Edge, "https://raw.githubusercontent.com/MicrosoftEdge/Status/production/status.json"),
-            (StatusDataType.WebKitWebCore, "http://svn.webkit.org/repository/webkit/trunk/Source/WebCore/features.json"),
-            (StatusDataType.WebKitJavaScriptCore, "http://svn.webkit.org/repository/webkit/trunk/Source/JavaScriptCore/features.json"),
+            (StatusDataType.WebKitWebCore, "https://raw.githubusercontent.com/WebKit/WebKit/main/Source/WebCore/features.json"),
+            (StatusDataType.WebKitJavaScriptCore, "https://raw.githubusercontent.com/WebKit/WebKit/main/Source/JavaScriptCore/features.json"),
             //(StatusDataType.Mozilla, "https://platform-status.mozilla.org/api/status"),
         };
 
