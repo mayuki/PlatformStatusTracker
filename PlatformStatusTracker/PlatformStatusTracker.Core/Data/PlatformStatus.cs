@@ -203,9 +203,9 @@ namespace PlatformStatusTracker.Core.Data
             [JsonProperty("status")]
             public ChromeStatusStatus Status { get; set; }
             [JsonProperty("prefixed")]
-            public bool Prefixed { get; set; }
+            public bool? Prefixed { get; set; }
             [JsonProperty("flag")]
-            public bool Flag { get; set; }
+            public bool? Flag { get; set; }
             [JsonProperty("bug")]
             public string Bug { get; set; }
             [JsonProperty("android")]
