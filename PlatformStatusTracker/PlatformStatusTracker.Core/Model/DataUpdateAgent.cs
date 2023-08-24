@@ -19,7 +19,7 @@ namespace PlatformStatusTracker.Core.Model
         private readonly ILogger _logger;
         private readonly IReadOnlyList<(StatusDataType DataType, string Url)> _targets = new[]
         {
-            (StatusDataType.Chromium, "http://www.chromestatus.com/features.json"),
+            (StatusDataType.Chromium, "https://chromestatus.com/features.json"),
             (StatusDataType.Edge, "https://raw.githubusercontent.com/MicrosoftEdge/Status/production/status.json"),
             (StatusDataType.WebKitWebCore, "https://raw.githubusercontent.com/WebKit/WebKit/main/Source/WebCore/features.json"),
             (StatusDataType.WebKitJavaScriptCore, "https://raw.githubusercontent.com/WebKit/WebKit/main/Source/JavaScriptCore/features.json"),

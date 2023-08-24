@@ -9,7 +9,7 @@
 }
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>Browser Platform Status Tracker</title>
-    <link href="@Url.Action("Index", "Home", new object(), "http")" />
+    <link href="@Url.Action("Index", "Home", new object(), "https")" />
     <updated>@Model.LastUpdatedAt.ToString("yyyy-MM-dd'T'HH:mm:ss.fffK", DateTimeFormatInfo.InvariantInfo)</updated>
     <author>
         <name>Mayuki Sawatari</name>
@@ -20,7 +20,7 @@
     {
         <entry>
             <title>@date.ToString("yyyy-MM-dd", new CultureInfo("en-us"))</title>
-            <link href="@Url.Action("Changes", "Home", new { Date = date.ToString("yyyy-MM-dd") }, "http")" />
+            <link href="@Url.Action("Changes", "Home", new { Date = date.ToString("yyyy-MM-dd") }, "https")" />
             <id>@Url.Action("Changes", "Home", new { Date = date.ToString("yyyy-MM-dd") }, "http")</id>
             <updated>@Model.GetUpdatedAtByDate(date).ToString("yyyy-MM-dd'T'HH:mm:ss.fffK", DateTimeFormatInfo.InvariantInfo)</updated>
             <content type="html">

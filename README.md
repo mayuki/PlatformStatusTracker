@@ -10,6 +10,6 @@
 ## Platform data sources
 
 - https://developer.microsoft.com/en-us/microsoft-edge/status/
-- http://www.chromestatus.com/features
+- https://chromestatus.com/features
 - https://webkit.org/status/
 - https://platform-status.mozilla.org/
